@@ -1,0 +1,36 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit               ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+     9                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    10                                  
+    11                                  ; our data is declared here (the variables needed by our program)
+    12                                  segment data use32 class=data
+    13                                      ; ...
+    14 00000000 01020304                    s db 1, 2, 3, 4
+    15                                      l equ $-s
+    16 00000004 0000<rept>                  d times l dw 0
+    17                                  ; our code starts here
+    18                                  segment code use32 class=code
+    19                                      start:
+    20                                          ; ...
+    21 00000000 B903000000                      mov ecx, l-1
+    22 00000005 BB00000000                      mov ebx, 0
+    23 0000000A BE00000000                      mov esi, 0
+    24 0000000F E316                            jecxz fin
+    25                                          bucla:
+    26 00000011 8A83[00000000]                      mov al,[s+ebx]
+    27 00000017 F6A3[01000000]                      mul byte [s+ebx+1]
+    28 0000001D 8883[04000000]                      mov [d+ebx], al
+    29 00000023 43                                  inc ebx
+    30 00000024 46                                  inc esi
+    31 00000025 E2EA                            loop bucla
+    32                                          fin:
+    33                                          
+    34                                          ; exit(0)
+    35 00000027 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    36 00000029 FF15[00000000]                  call    [exit]       ; call exit to terminate the program

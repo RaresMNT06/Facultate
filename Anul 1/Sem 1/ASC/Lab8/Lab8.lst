@@ -1,0 +1,61 @@
+     1                                  bits 32
+     2                                  global start
+     3                                  
+     4                                  extern exit, scanf, printf
+     5                                  
+     6                                  import scanf msvcrt.dll
+     7                                  import printf msvcrt.dll
+     8                                  import exit msvcrt.dll
+     9                                  %include "Lab_8.asm"
+     1                              <1> %ifndef _LAB_8_ASM_
+     2                              <1> %define _LAB_8_ASM_
+     3                              <1> 
+     4                              <1> 
+     5                              <1> calcul:
+     6 00000000 8B442404            <1>     mov eax, [esp+4]   
+     7 00000004 8B4C2408            <1>     mov ecx, [esp+8]   
+     8 00000008 8B54240C            <1>     mov edx, [esp+12]  
+     9                              <1> 
+    10 0000000C 01C8                <1>     add eax, ecx
+    11 0000000E 29D0                <1>     sub eax, edx
+    12                              <1> 
+    13 00000010 C20C00              <1>     ret 12
+    14                              <1>     
+    15                              <1> %endif
+    10                                  segment data use32
+    11 00000013 00000000                    a dd 0
+    12 00000017 00000000                    b dd 0
+    13 0000001B 00000000                    c dd 0
+    14 0000001F 256400                      format db "%d", 0
+    15                                  
+    16                                  segment code use32
+    17                                  start:
+    18 00000000 68[13000000]                push dword a
+    19 00000005 68[1F000000]                push dword format
+    20 0000000A FF15[00000000]              call [scanf]
+    21 00000010 83C408                      add esp, 8
+    22                                  
+    23 00000013 68[17000000]                push dword b
+    24 00000018 68[1F000000]                push dword format
+    25 0000001D FF15[00000000]              call [scanf]
+    26 00000023 83C408                      add esp, 8
+    27                                  
+    28 00000026 68[1B000000]                push dword c
+    29 0000002B 68[1F000000]                push dword format
+    30 00000030 FF15[00000000]              call [scanf]
+    31 00000036 83C408                      add esp, 8
+    32                                  
+    33                                      
+    34 00000039 FF35[1B000000]              push dword [c]
+    35 0000003F FF35[17000000]              push dword [b]
+    36 00000045 FF35[13000000]              push dword [a]
+    37 0000004B E8(00000000)                call calcul
+    38 00000050 83C40C                      add esp, 12
+    39                                  
+    40 00000053 50                          push eax
+    41 00000054 68[1F000000]                push dword format
+    42 00000059 FF15[00000000]              call [printf]
+    43 0000005F 83C408                      add esp, 8
+    44                                  
+    45 00000062 6A00                        push dword 0
+    46 00000064 FF15[00000000]              call [exit]

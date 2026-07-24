@@ -1,0 +1,73 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit               ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+     9                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    10                                  
+    11                                  ; our data is declared here (the variables needed by our program)
+    12                                  segment data use32 class=data
+    13                                      ; ...
+    14                                      ; Modify the code to solve the given problem.
+    15                                      ; Mark lines that were added/removed/changed with a comment.
+    16                                      ;
+    17                                      ; Given: a - word, b - word, c - double word,s
+    18                                      ;
+    19                                      ; Compute c as follows:
+    20                                      ; - c[0-5] <- a[3-8]
+    21                                      ; - c[6-8] <- b[2-4]
+    22                                      ; - c[9-15] <- a[6-12]
+    23                                      ; - c[16-31] <- 1
+    24                                      ;
+    25                                      ; NOTE: Ranges are 0-indexed and inclusive,
+    26                                      ; e.g. [0-2] means first 3 bits.
+    27                                      ;
+    28                                      ; Compute in the signed representation:
+    29                                      ; res = (a + b) / (a * -3 + c) + c
+    30 00000000 00000000                    res dd 0
+    31 00000004 D204                        a dw 1234
+    32 00000006 8F19                        b dw 6543
+    33 00000008 00000000                    c dd 0
+    34                                  ; our code starts here
+    35                                  segment code use32 class=code
+    36                                      start:
+    37                                          ; ...
+    38                                          mov ax, dword [a]
+    38          ******************       error: mismatch in operand sizes
+    39 00000000 6683E03F                        and ax, 000111111b
+    40 00000004 66C1E803                        shr ax, 3
+    41 00000008 660905[08000000]                or [c], ax
+    42 0000000F 66A1[06000000]                  mov ax, [b]
+    43 00000015 6683E01C                        and ax, 11100b
+    44 00000019 66C1E804                        shr ax, 4
+    45 0000001D 660905[08000000]                or [c], ax
+    46 00000024 66A1[04000000]                  mov ax, [a]
+    47 0000002A 6625C01F                        and ax, 1111111000000b
+    48 0000002E 66C1E803                        shr ax, 3
+    49 00000032 660905[08000000]                or [c], ax
+    50 00000039 B800000000                      mov eax, 0
+    51 0000003E F7D0                            not eax
+    52 00000040 C1E01F                          shl eax, 31
+    53 00000043 A3[08000000]                    mov [c], eax
+    54 00000048 668B1D[04000000]                mov bx, [a]
+    55 0000004F 662B1D[06000000]                sub bx, [b]
+    56 00000056 66A1[04000000]                  mov ax, [a]
+    57                                          imul -3
+    57          ******************       error: invalid combination of opcode and operands
+    58 0000005C 6699                            cwd
+    59 0000005E 0305[08000000]                  add eax, [c]
+    60 00000064 89C1                            mov ecx, eax
+    61 00000066 6689D8                          mov ax, bx
+    62 00000069 98                              cwde
+    63 0000006A 99                              cdq
+    64 0000006B F7F1                            div ecx
+    65                                          add eax, word [c]
+    65          ******************       error: mismatch in operand sizes
+    66                                          mov res, eax
+    66          ******************       error: invalid combination of opcode and operands
+    67                                          ; exit(0)
+    68 0000006D 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    69 0000006F FF15[00000000]                  call    [exit]       ; call exit to terminate the program

@@ -1,0 +1,104 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit, fopen, fprintf, fclose, printf,fread,scanf
+     8                                  import exit msvcrt.dll
+     9                                  import fread msvcrt.dll  
+    10                                  import fopen msvcrt.dll  
+    11                                  import fprintf msvcrt.dll
+    12                                  import fclose msvcrt.dll 
+    13                                  import printf msvcrt.dll
+    14                                  import scanf msvcrt.dll
+    15                                    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+    16                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    17                                  
+    18                                  ; our data is declared here (the variables needed by our program)
+    19                                  segment data use32 class=data
+    20                                      ; ...
+    21 00000000 616263616241416263-         s db "abcabAAbcbb", 0
+    21 00000009 626200             
+    22                                      len equ $-s
+    23 0000000C 00<rept>                    filename times 128 db 0        
+    24 0000008C 257300                      file_name_scanf db "%s", 0   
+    25 0000008F 7700                        file_name_read db "w", 0           ; creăm fișierul cu scriere
+    26 00000091 00000000                    file_pointer dd 0               ; aici salvăm pointerul FILE*
+    27 00000095 496E74726F6475206E-         mesaj_cerere_nume db "Introdu numele fisierului: ", 0
+    27 0000009E 756D656C6520666973-
+    27 000000A7 696572756C75693A20-
+    27 000000B0 00                 
+    28 000000B1 00000000<rept>              frecv times 256 dd 0
+    29 000004B1 25632025640A00              linie_noua db "%c %d", 10, 0    ; 10 vine de la \n pentru a scrie pe o alta linie
+    30                                  
+    31                                  ; our code starts here
+    32                                  segment code use32 class=code
+    33                                      start:
+    34                                          ; ...
+    35 00000000 68[95000000]                    push dword mesaj_cerere_nume
+    36 00000005 FF15[00000000]                  call [printf]
+    37 0000000B 83C404                          add esp, 4
+    38                                          
+    39                                          ; !!! scanf(format, buffer) – formatul se pune ultimul pe stivă
+    40 0000000E 68[0C000000]                    push dword filename
+    41 00000013 68[8C000000]                    push dword file_name_scanf
+    42 00000018 FF15[00000000]                  call [scanf]
+    43 0000001E 83C408                          add esp, 8
+    44                                          
+    45 00000021 68[8F000000]                    push dword file_name_read
+    46 00000026 68[0C000000]                    push dword filename
+    47 0000002B FF15[00000000]                  call [fopen]
+    48 00000031 83C408                          add esp, 8
+    49                                          
+    50 00000034 A3[91000000]                    mov [file_pointer], eax
+    51 00000039 83F800                          cmp eax, 0
+    52 0000003C 744B                            je inchide_fisier          ; daca nu s-a deschis fisierul, iesim
+    53                                          
+    54                                          ; ---------------- NUMARARE CARACTERE ----------------
+    55 0000003E BB00000000                      mov ebx, 0                 ; ebx = index in sirul s
+    56                                  
+    57                                      numara_caractere:
+    58 00000043 8A83[00000000]                      mov al, [s + ebx]      ; luam caracterul de pe pozitia ebx
+    59 00000049 3C00                                cmp al, 0              ; daca este terminatorul de sir, ne oprim
+    60 0000004B 740D                                je scriere_rezultate
+    61                                  
+    62 0000004D 0FB6D0                              movzx edx, al          ; EDX = codul caracterului (0..255)
+    63 00000050 FF0495[B1000000]                    inc dword [frecv + edx*4] ; frecv[caracter]++
+    64                                  
+    65 00000057 43                                  inc ebx                ; trecem la urmatorul caracter
+    66 00000058 EBE9                                jmp numara_caractere
+    67                                  
+    68                                              
+    69                                  scriere_rezultate:
+    70 0000005A 31C9                        xor ecx, ecx                   ; ECX = caracterul (0..255)
+    71                                  
+    72                                  scrie_loop:
+    73 0000005C 81F900010000                cmp ecx, 256
+    74 00000062 7D25                        jge inchide_fisier
+    75                                  
+    76 00000064 8B048D[B1000000]            mov eax, [frecv + ecx*4]
+    77 0000006B 83F800                      cmp eax, 0
+    78 0000006E 7416                        je continua
+    79                                  
+    80                                      ; fprintf(file_pointer, "%c %d\n", ecx, eax)
+    81 00000070 50                          push eax                       ; frecventa
+    82 00000071 51                          push ecx                       ; caracter
+    83 00000072 68[B1040000]                push dword linie_noua          ; "%c %d\n"
+    84 00000077 FF35[91000000]              push dword [file_pointer]      ; fisierul
+    85 0000007D FF15[00000000]              call [fprintf]
+    86 00000083 83C410                      add esp, 16 
+    87                                  
+    88                                  continua:
+    89 00000086 41                          inc ecx
+    90 00000087 EBD3                        jmp scrie_loop
+    91                                  
+    92                                              
+    93                                  inchide_fisier:
+    94 00000089 FF35[91000000]              push dword [file_pointer]
+    95 0000008F FF15[00000000]              call [fclose]
+    96 00000095 83C404                      add esp, 4
+    97                                  
+    98                                      ; exit(0)
+    99 00000098 6A00                        push    dword 0      ; push the parameter for exit onto the stack
+   100 0000009A FF15[00000000]              call    [exit]       ; call exit to terminate the program

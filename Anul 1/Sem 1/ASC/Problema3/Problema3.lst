@@ -1,0 +1,77 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit               ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+     9                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    10                                  
+    11                                  ; our data is declared here (the variables needed by our program)
+    12                                  segment data use32 class=data
+    13                                      ; ...
+    14 00000000 3412                        a dw 1234h	
+    15 00000002 5B                      	b db 5Bh	
+    16 00000003 01000000                	c dd 1	
+    17                                  ; our code starts here
+    18                                  segment code use32 class=code
+    19                                      start:
+    20                                          ; ...
+    21                                          ;Fie următoarea problemă și soluția propusă (codul sursă), este soluția corectă? 
+    22                                          ;Dacă considerați că este necesar, modificați codul pentru a rezolva problema. 
+    23                                          ;Asigurați-vă că codul se asamblează fără erori sau avertismente.
+    24                                          ;-----------------------------------------------------------------------------------
+    25                                          ;Se dau cuvantul a si octetul b. Dublucuvantul c se formează astfel:
+    26                                          ;- bitii 0-2 ai lui c au valoarea 1
+    27                                          ;- bitii 3-5 ai lui c au valoarea 0
+    28                                          ;- bitii 6-9 ai lui c coincid cu bitii 11-14 ai lui a
+    29                                          ;- bitii 10-15 ai lui c coincid cu bitii 1-6 ai lui b
+    30                                          ;- bitii 16-31 ai lui c au valoarea lui a
+    31                                          ;Să se efectueze în interpretarea cu semn operația ((a+c)/b+c)*2-a
+    32                                          ;-----------------------------------------------------------------------------------
+    33 00000000 C705[03000000]0700-     		MOV dword [c], 0000_0000_0000_0000_0000_0000_0000_0111b 	
+    33 00000008 0000               
+    34 0000000A 66A1[00000000]          		MOV AX,[a]
+    35                                  		;AND AX,7800b greseala s 7 si 8 nu sunt numere din baza 2
+    36 00000010 66250078                        and AX, 0111_1000_0000_0000b ; luam bitii 14-11 a lui a
+    37                                  		;SAR AX,5	greseala pentru un numar care are bitul de semn 1 muta gresit spre dreapta
+    38 00000014 66C1E805                        shr AX, 5
+    39 00000018 660905[03000000]        		OR [c],AX	; c =  0000 0000 0000 0000 0000 0000 1000 0111		
+    40 0000001F A0[02000000]            		MOV AL,byte[b]
+    41 00000024 B400                    		MOV AH,0
+    42 00000026 6683E07E                		AND AX,0000_0000_0111_1110b
+    43 0000002A 66C1E009                		SHL AX,9	
+    44                                  		;AND [c],AX daca facem and riscam sa pierdem valoarea anterioara a lui c
+    45 0000002E 660905[03000000]                or [c], AX  ;c = 0000 0000 0000 0000 1011 0100 1000 0111   
+    46 00000035 B800000000                      mov eax,0
+    47 0000003A 66A1[00000000]                  mov ax,[a]
+    48 00000040 C1E010                          shl eax,16
+    49 00000043 0905[03000000]                  OR [c],eax
+    50 00000049 A1[03000000]                    mov eax, [c]
+    51                                          ; ((a+c)/b+c)*2-a
+    52 0000004E B800000000                      mov eax, 0 ;doar de asigurare ca eax este gol
+    53 00000053 660FBE05[00000000]      		movsx ax,byte [a];ax = a			
+    54 0000005B 98                      		cwde ;eax = a	
+    55 0000005C 0305[03000000]          		add eax,[c];eax = a+c			
+    56 00000062 BA00000000              		mov edx,0					
+    57                                  		;movsx ebx,word[b] greseala b este de tip byte 
+    58 00000067 0FBE1D[02000000]                movsx ebx, byte[b]
+    59                                  		;idiv [b]	greseala nu este determinata dimensiunea lui b
+    60 0000006E F7FB                            idiv ebx ; edx:eax= (a+c)/b
+    61 00000070 0305[03000000]          		add eax,[c] ;eax =(a+c)/b+c
+    62                                  		;imul 2		greseala, 2 trebuie pus intr un registru sau o variabila
+    63 00000076 66B90200                        mov cx, 2
+    64 0000007A 66F7E9                          imul cx ;  eax= ((a+c)/b+c)*2
+    65                                  		;mov eax,ebx	stricam eax unde calculam rezultatul	
+    66 0000007D 89D1                    		mov ecx,edx		
+    67                                  		;movsx eax, word[a] in eax avem rezultatul
+    68 0000007F 0FBF1D[00000000]                movsx ebx, word[a]
+    69                                  		;cdq	ebx	greseala, nu trebuie scris registrul
+    70 00000086 99                              cdq
+    71 00000087 29D8                    		sub eax,ebx
+    72 00000089 19CA                    		sbb edx,ecx	
+    73                                          ; exit(0)
+    74 0000008B 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    75 0000008D FF15[00000000]                  call    [exit]       ; call exit to terminate the program
+    76                                  

@@ -1,0 +1,146 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit,scanf,fclose,fopen,fprintf            ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll
+     9                                  import scanf msvcrt.dll
+    10                                  import fclose msvcrt.dll
+    11                                  import fopen msvcrt.dll
+    12                                  import fprintf msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+    13                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    14                                  ;se citesc la tastatura numere panda dam de 0 si se pune in fisierul pare_nr prare numerele pare si analog la impare
+    15                                  ; our data is declared here (the variables needed by our program)
+    16                                  segment data use32 class=data
+    17                                      ; ...
+    18 00000000 00000000<rept>              sir_pare times 100 dd 0
+    19 00000190 00000000<rept>              sir_impare times 100 dd 0
+    20 00000320 7700000000000000            mod_acces dd "w",0
+    21 00000328 00000000                    descriptor_pare dd 0
+    22 0000032C 00000000                    descriptor_impare dd 0
+    23 00000330 706172652D302E7478-         nume_fisier_pare db "pare-0.txt", 0
+    23 00000339 7400               
+    24 0000033B 696D706172652D302E-         nume_fisier_impare db "impare-0.txt", 0
+    24 00000344 74787400           
+    25 00000348 25642000                    format_print db "%d ", 0
+    26 0000034C 256400                      format_scan db "%d", 0
+    27 0000034F 00                          index_pare db 0
+    28 00000350 00                          index_impare db 0
+    29 00000351 00000000                    numar dd 0
+    30                                  
+    31                                  ; our code starts here
+    32                                  segment code use32 class=code
+    33                                      start:
+    34                                          ; ...
+    35                                          citire:
+    36 00000000 68[51030000]                        push dword numar
+    37 00000005 68[4C030000]                        push dword format_scan
+    38 0000000A FF15[00000000]                      call [scanf]
+    39 00000010 83C408                              add esp, 4*2
+    40                                              
+    41 00000013 833D[51030000]00                    cmp dword [numar], 0
+    42 0000001A 7442                                je scriere_fisier
+    43                                              
+    44 0000001C F705[51030000]0100-                 test dword [numar], 1b
+    44 00000024 0000               
+    45 00000026 741B                                jz nr_par
+    46 00000028 0FB615[50030000]                        movzx edx, byte [index_impare]
+    47 0000002F A1[51030000]                            mov eax, dword [numar]
+    48 00000034 890495[90010000]                        mov dword [sir_impare+ edx*4] ,eax
+    49 0000003B FE05[50030000]                          inc byte [index_impare]
+    50 00000041 EBBD                                    jmp citire
+    51                                              
+    52                                              nr_par:
+    53 00000043 0FB615[4F030000]                        movzx edx, byte [index_pare]
+    54 0000004A A1[51030000]                            mov eax, dword [numar]
+    55 0000004F 890495[00000000]                        mov dword [sir_pare+ edx*4] ,eax
+    56 00000056 FE05[4F030000]                          inc byte [index_pare]
+    57 0000005C EBA2                                    jmp citire
+    58                                              
+    59                                          scriere_fisier:
+    60 0000005E 8A0D[4F030000]                      mov cl, byte [index_pare]
+    61 00000064 80C130                              add cl, '0'
+    62 00000067 880D[35030000]                      mov byte [nume_fisier_pare+5] ,cl
+    63                                              
+    64 0000006D 8A0D[50030000]                      mov cl, byte [index_impare]
+    65 00000073 80C130                              add cl, '0'
+    66 00000076 880D[42030000]                      mov byte [nume_fisier_impare+7] ,cl
+    67                                              
+    68                                              
+    69 0000007C 68[20030000]                        push dword mod_acces
+    70 00000081 68[3B030000]                        push dword nume_fisier_impare
+    71 00000086 FF15[00000000]                      call [fopen]
+    72 0000008C 83C408                              add esp, 4*2
+    73                                              
+    74 0000008F A3[2C030000]                        mov [descriptor_impare],eax
+    75                                              
+    76 00000094 68[20030000]                        push dword mod_acces
+    77 00000099 68[30030000]                        push dword nume_fisier_pare
+    78 0000009E FF15[00000000]                      call [fopen]
+    79 000000A4 83C408                              add esp, 4*2
+    80                                              
+    81 000000A7 A3[28030000]                        mov [descriptor_pare],eax
+    82                                              
+    83 000000AC 803D[50030000]00                    cmp byte [index_impare], 0
+    84 000000B3 7430                                je scriere_pare
+    85                                              
+    86 000000B5 B900000000                          mov ecx, 0
+    87 000000BA 8A0D[50030000]                      mov cl, byte [index_impare]
+    88 000000C0 FC                                  cld
+    89 000000C1 BE[90010000]                        mov esi, sir_impare
+    90                                              
+    91                                              repeta_impare:
+    92 000000C6 B800000000                              mov eax, 0
+    93 000000CB AD                                      lodsd
+    94 000000CC 51                                      push ecx
+    95                                                  
+    96 000000CD 50                                      push dword eax
+    97 000000CE 68[48030000]                            push dword format_print
+    98 000000D3 FF35[2C030000]                          push dword [descriptor_impare]
+    99 000000D9 FF15[00000000]                          call [fprintf]
+   100 000000DF 83C40C                                  add esp, 4*3
+   101                                                  
+   102 000000E2 59                                      pop ecx
+   103                                              
+   104 000000E3 E2E1                                loop repeta_impare
+   105                                              
+   106                                              scriere_pare:
+   107 000000E5 803D[4F030000]00                    cmp byte [index_pare], 0
+   108 000000EC 7430                                je gata
+   109                                              
+   110 000000EE B900000000                          mov ecx, 0
+   111 000000F3 8A0D[4F030000]                      mov cl, byte [index_pare]
+   112 000000F9 FC                                  cld
+   113 000000FA BE[00000000]                        mov esi, sir_pare
+   114                                              
+   115                                              repeta_pare:
+   116 000000FF B800000000                              mov eax, 0
+   117 00000104 AD                                      lodsd
+   118 00000105 51                                      push ecx
+   119                                                  
+   120 00000106 50                                      push dword eax
+   121 00000107 68[48030000]                            push dword format_print
+   122 0000010C FF35[28030000]                          push dword [descriptor_pare]
+   123 00000112 FF15[00000000]                          call [fprintf]
+   124 00000118 83C40C                                  add esp, 4*3
+   125                                                  
+   126 0000011B 59                                      pop ecx
+   127                                              
+   128 0000011C E2E1                                loop repeta_pare
+   129                                              
+   130                                              gata:
+   131                                              
+   132 0000011E FF35[2C030000]                      push dword [descriptor_impare]
+   133 00000124 FF15[00000000]                      call [fclose]
+   134 0000012A 83C404                              add esp, 4
+   135                                              
+   136 0000012D FF35[28030000]                      push dword [descriptor_pare]
+   137 00000133 FF15[00000000]                      call [fclose]
+   138 00000139 83C404                              add esp, 4
+   139                                                  
+   140                                              
+   141                                          ; exit(0)
+   142 0000013C 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+   143 0000013E FF15[00000000]                  call    [exit]       ; call exit to terminate the program

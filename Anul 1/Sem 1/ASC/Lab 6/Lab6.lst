@@ -1,0 +1,51 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  ;Se da un sir de octeti s. Sa se construiasca sirul de octeti d, care contine pe fiecare pozitie numarul de biti 1 ai octetului de pe pozitia corespunzatoare din s.
+     3                                  ;Exemplu:
+     4                                  ;s: 5, 25, 55, 127
+     5                                  ;in binary:
+     6                                  ;101, 11001,10111,1111111
+     7                                  ;d: 2, 3, 5, 7
+     8                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     9                                  global start        
+    10                                  
+    11                                  ; declare external functions needed by our program
+    12                                  extern exit               ; tell nasm that exit exists even if we won't be defining it
+    13                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+    14                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    15                                  
+    16                                  ; our data is declared here (the variables needed by our program)
+    17                                  segment data use32 class=data
+    18                                      ; ...
+    19 00000000 0519377F                    s db 5, 25, 55, 127
+    20                                      len equ $-s
+    21 00000004 00<rept>                    d times len db 0
+    22                                  ; our code starts here
+    23                                  segment code use32 class=code
+    24                                      start:
+    25                                          ; ...
+    26 00000000 FC                              cld
+    27 00000001 BE[00000000]                    mov esi, s 
+    28 00000006 BF[04000000]                    mov edi, d
+    29 0000000B B904000000                      mov ecx, len
+    30                                          
+    31                                          repeta:
+    32 00000010 AC                                  lodsb
+    33 00000011 88C3                                mov bl, al
+    34 00000013 BA00000000                          mov edx, 0; aici vom retine numarul de biti de 1 din fiecare numar din sir
+    35 00000018 B708                                mov bh, 8; punem in bh 8 pentru a parcurge toti bitii din numar
+    36                                          nr_biti:
+    37 0000001A F6C301                              test bl, 1b; verifc daca ultimul bit e 1
+    38 0000001D 7401                                jz skip    
+    39 0000001F 42                                  inc edx
+    40                                          skip:
+    41 00000020 D0EB                                shr bl, 1
+    42 00000022 FECF                                dec bh
+    43 00000024 75F4                                jnz nr_biti
+    44                                              
+    45 00000026 8817                                mov [edi], dl
+    46 00000028 47                                  inc edi
+    47 00000029 E2E5                            loop repeta
+    48                                              
+    49                                          ; exit(0)
+    50 0000002B 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    51 0000002D FF15[00000000]                  call    [exit]       ; call exit to terminate the program

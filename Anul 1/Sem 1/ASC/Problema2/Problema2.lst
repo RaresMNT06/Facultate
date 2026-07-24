@@ -1,0 +1,81 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit               ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+     9                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    10                                  
+    11                                  ; our data is declared here (the variables needed by our program)
+    12                                  segment data use32 class=data
+    13                                      ; ...
+    14                                      ; Modify the code to solve the given problem.
+    15                                  ; Mark lines that were added/removed/changed with a comment.
+    16                                  ;
+    17                                  ; Given: a - word, b - word, c - double word,s
+    18                                  ;
+    19                                  ; Compute c as follows:
+    20                                  ; - c[0-3] <- a[5-8]
+    21                                  ; - c[4-10] <- b[0-6]
+    22                                  ; - c[11-18] <- 1
+    23                                  ; - c[19-31] <- b[3-15]
+    24                                  ;
+    25                                  ; NOTE: Ranges are 0-indexed and inclusive,
+    26                                  ; e.g. [0-2] means first 3 bits.
+    27                                  ;
+    28                                  ; Compute in the signed representation:
+    29                                  ; res = a * -2 + (a / b - c) - c
+    30                                  
+    31                                  
+    32 00000000 00000000                    res dd 0
+    33 00000004 3412                        a dw 1234h
+    34 00000006 2143                        b dw 4321h
+    35 00000008 00000000                    c dd 0
+    36 0000000C FEFF                        d dw -2
+    37                                      
+    38                                  ; our code starts here
+    39                                  segment code use32 class=code
+    40                                      start:
+    41                                          ; ...
+    42 00000000 66A1[04000000]                  mov ax, word [a]
+    43 00000006 6625E001                        and ax, 0000000111100000b
+    44 0000000A 66C1E805                        shr ax, 5
+    45 0000000E 660905[08000000]                or [c], ax   
+    46 00000015 66A1[06000000]                  mov ax, word [b]
+    47 0000001B 6683E07F                        and ax, 0000000001111111b
+    48 0000001F 66C1E004                        shl ax, 4
+    49 00000023 660905[08000000]                or [c], ax
+    50 0000002A B800000000                      mov eax, 0
+    51 0000002F B8FF000000                      mov eax, 11111111b
+    52 00000034 C1E00B                          shl eax, 11
+    53 00000037 0905[08000000]                  or [c], eax  
+    54 0000003D BB00000000                      mov ebx, 0
+    55 00000042 0FB71D[06000000]                movzx ebx, word [b]
+    56 00000049 81E3F8FF0000                    and ebx, 1111111111111000b
+    57 0000004F C1E310                          shl ebx, 16
+    58 00000052 091D[08000000]                  or [c], ebx
+    59 00000058 8B1D[08000000]                  mov ebx, dword[c]
+    60                                          ;calcul aritmetic
+    61 0000005E B800000000                      mov eax, 0
+    62 00000063 66A1[04000000]                  mov ax, word [a]
+    63 00000069 66F72D[0C000000]                imul word [d]; dx:ax= a*-2
+    64 00000070 6652                            push dx
+    65 00000072 6650                            push ax
+    66 00000074 58                              pop eax ; eax = a*-2
+    67 00000075 89C3                            mov ebx , eax ; ebx = a*-2
+    68 00000077 66A1[04000000]                  mov ax, word [a]
+    69 0000007D 6699                            cwd
+    70 0000007F 66F73D[06000000]                idiv word [b]; ax = a/b
+    71 00000086 0FBFC0                          movsx eax, ax
+    72 00000089 2B05[08000000]                  sub eax, [c]
+    73 0000008F 01C3                            add ebx, eax
+    74 00000091 2B1D[08000000]                  sub ebx, [c]
+    75 00000097 891D[00000000]                  mov [res], ebx        
+    76                                          ; exit(0)
+    77 0000009D 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    78 0000009F FF15[00000000]                  call    [exit]       ; call exit to terminate the program
+    79                                  
+    80                                  
+    81                                  

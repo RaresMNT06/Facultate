@@ -1,0 +1,95 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit, fprintf,fopen,fclose,               ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+     9                                  import fprintf msvcrt.dll
+    10                                  import fopen msvcrt.dll
+    11                                  import fclose msvcrt.dll                          ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    12                                  
+    13                                  ; our data is declared here (the variables needed by our program)
+    14                                  segment data use32 class=data
+    15                                      ; ...
+    16 00000000 616464636363636464-         sir db "addccccdddddd", 0
+    16 00000009 6464646400         
+    17                                      len equ $-sir
+    18 0000000E 257300                      format_afisare db "%s", 0
+    19 00000011 00000000                    descriptor_fisier dd 0
+    20 00000015 7700                        mod_acces db "w", 0
+    21 00000017 6F75747075742D302E-         file_name db "output-0.txt", 0
+    21 00000020 74787400           
+    22 00000024 00                          caracter db 0
+    23 00000025 00                          lungime_curenta db 0
+    24 00000026 00                          lungime_max db 0
+    25 00000027 00                          caracter_max db 0
+    26 00000028 00<rept>                    sir_sub_max times 100 db 0
+    27                                      
+    28                                  ; our code starts here
+    29                                  segment code use32 class=code
+    30                                      start:
+    31                                          ; ...
+    32 00000000 BE[00000000]                    mov esi, sir
+    33 00000005 B90E000000                      mov ecx, len
+    34 0000000A 8A06                            mov al, byte[esi]
+    35 0000000C A2[24000000]                    mov byte [caracter], al
+    36                                          
+    37                                          bucla:
+    38 00000011 AC                                  lodsb
+    39 00000012 3805[24000000]                      cmp [caracter], al
+    40 00000018 7508                                jne nu_sunt_egale
+    41 0000001A FE05[25000000]                          inc byte[lungime_curenta]
+    42 00000020 EB0E                                    jmp modificare_maxim
+    43                                                  
+    44                                              
+    45                                              
+    46                                              nu_sunt_egale:
+    47 00000022 C605[25000000]01                        mov byte [lungime_curenta], 1
+    48 00000029 A2[24000000]                            mov [caracter], al
+    49 0000002E EB20                                    jmp final_iteratie
+    50                                              
+    51                                              modificare_maxim:
+    52 00000030 8A15[25000000]                          mov dl, byte [lungime_curenta]
+    53 00000036 3A15[26000000]                          cmp dl, byte [lungime_max]
+    54 0000003C 7212                                    jb lungime_curenta_mai_mica
+    55 0000003E 8815[26000000]                              mov [lungime_max] , dl
+    56 00000044 8A15[24000000]                              mov dl, [caracter]
+    57 0000004A 8815[27000000]                              mov byte [caracter_max] , dl
+    58                                                  lungime_curenta_mai_mica:
+    59                                              final_iteratie:
+    60                                                  
+    61 00000050 E2BF                            loop bucla
+    62                                          
+    63 00000052 8A0D[26000000]                  mov cl, byte[lungime_max]
+    64 00000058 BF[28000000]                    mov edi, sir_sub_max
+    65 0000005D A0[27000000]                    mov al, byte[caracter_max]
+    66                                          bucla_subsecventa:
+    67 00000062 AA                                  stosb
+    68 00000063 E2FD                            loop bucla_subsecventa
+    69 00000065 B030                            mov al, '0'
+    70 00000067 0205[26000000]                  add al, [lungime_max]
+    71 0000006D A2[1E000000]                    mov [file_name+7], al
+    72                                          
+    73 00000072 68[15000000]                    push dword mod_acces
+    74 00000077 68[17000000]                    push dword file_name
+    75 0000007C FF15[00000000]                  call [fopen]
+    76 00000082 83C408                          add esp, 4*2
+    77                                          
+    78 00000085 A3[11000000]                    mov [descriptor_fisier],eax
+    79                                          
+    80 0000008A 68[28000000]                    push dword sir_sub_max
+    81 0000008F 68[0E000000]                    push dword format_afisare
+    82 00000094 FF35[11000000]                  push dword [descriptor_fisier]
+    83 0000009A FF15[00000000]                  call [fprintf]
+    84 000000A0 83C40C                          add esp , 4*3
+    85                                          
+    86 000000A3 FF35[11000000]                  push dword [descriptor_fisier]
+    87 000000A9 FF15[00000000]                  call [fclose]
+    88 000000AF 83C404                          add esp, 4
+    89                                          
+    90                                          
+    91                                          ; exit(0)
+    92 000000B2 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    93 000000B4 FF15[00000000]                  call    [exit]       ; call exit to terminate the program

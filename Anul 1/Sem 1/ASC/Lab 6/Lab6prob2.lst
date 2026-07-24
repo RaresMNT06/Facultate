@@ -1,0 +1,47 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  ;Se da un sir de dublucuvinte. Sa se obtina sirul format din octetii superiori ai
+     6                                  ;cuvitelor superioare din elementele sirului de dublucuvinte care sunt divizibili cu 3.
+     7                                  ;Exemplu:
+     8                                  ;Se da sirul de dublucuvinte:
+     9                                  ;s DD 12345678h, 1A2B3C4Dh, FE98DC76h
+    10                                  ;Sa se obtina sirul
+    11                                  ;d DB 12h.
+    12                                  ; declare external functions needed by our program
+    13                                  extern exit               ; tell nasm that exit exists even if we won't be defining it
+    14                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+    15                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    16                                  
+    17                                  ; our data is declared here (the variables needed by our program)
+    18                                  segment data use32 class=data
+    19                                      ; ...
+    20 00000000 785634124D3C2B1A76-         s DD 12345678h, 1A2B3C4Dh, 0F98DC76h
+    20 00000009 DC980F             
+    21                                      len equ $-s
+    22 0000000C 00<rept>                    d times len db 0
+    23                                  ; our code starts here
+    24                                  segment code use32 class=code
+    25                                      start:
+    26                                          ; ...
+    27 00000000 FC                              cld
+    28 00000001 BE[00000000]                    mov esi, s
+    29 00000006 BF[0C000000]                    mov edi, d
+    30 0000000B B90C000000                      mov ecx, len
+    31                                          repeta:
+    32 00000010 AD                                  lodsd    
+    33 00000011 89C3                                mov ebx, eax
+    34 00000013 C1E818                              shr eax, 24         
+    35 00000016 B303                                mov bl, 3
+    36 00000018 F6F3                                div bl                 
+    37 0000001A 80FC00                              cmp ah, 0
+    38 0000001D 7506                                jne next   ;daca nu e div cu 3 trecem la urm numar
+    39 0000001F C1EB18                              shr ebx, 24
+    40 00000022 881F                                mov [edi], bl
+    41 00000024 47                                  inc edi
+    42                                          next:  
+    43 00000025 E2E9                                loop repeta
+    44                                          ; exit(0)
+    45 00000027 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    46 00000029 FF15[00000000]                  call    [exit]       ; call exit to terminate the program

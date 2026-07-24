@@ -1,0 +1,4 @@
+1,Big foot is real,classic,35,1
+2,illuminati control the world,political,50,10
+3,Moonlanding was fake,historical,40,2
+

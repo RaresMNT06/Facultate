@@ -1,0 +1,50 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  ;Problema2
+     3                                  ;Se dau cuvintele A si B. Se cere dublucuvantul C:
+     4                                  ;bitii 0-3 ai lui C coincid cu bitii 5-8 ai lui B
+     5                                  ;bitii 4-8 ai lui C coincid cu bitii 0-4 ai lui A
+     6                                  ;bitii 9-15 ai lui C coincid cu bitii 6-12 ai lui A
+     7                                  ;bitii 16-31 ai lui C coincid cu bitii lui B
+     8                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     9                                  global start        
+    10                                  
+    11                                  ; declare external functions needed by our program
+    12                                  extern exit               ; tell nasm that exit exists even if we won't be defining it
+    13                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+    14                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    15                                  
+    16                                  ; our data is declared here (the variables needed by our program)
+    17                                  segment data use32 class=data
+    18                                      ; ...
+    19 00000000 A1B7                        A dw 1011011110100001b
+    20 00000002 D75E                        B dw 0101111011010111b
+    21 00000004 00000000                    C dd 0
+    22                                  ; our code starts here
+    23                                  segment code use32 class=code
+    24                                      start:
+    25                                          ; ...
+    26 00000000 B900000000                      mov ecx, 0 ;aici vom calcula rezultatul
+    27 00000005 668B1D[02000000]                mov bx, [B]; izolam bitii 5-8 a lui B
+    28 0000000C 6681E3E001                      and bx, 0000000111100000b; bx=0000 0000 1100 0000
+    29 00000011 66C1CB05                        ror bx, 5; bx=0000 0000 0000 0110
+    30 00000015 0FB7CB                          movzx ecx, bx; ecx= 0000 0000 0000 0000 0000 0000 0000 0110 punem in rezultat bitii 5-8 a lui B pe poztiile 0 3 a lui C
+    31 00000018 66A1[00000000]                  mov ax, [A] 
+    32 0000001E 6683E01F                        and ax, 0000000000011111b; ax=0000 0000 0000 0001
+    33 00000022 66C1E004                        shl ax, 4; ax=0000 0000 0001 0000
+    34 00000026 6609D8                          or ax,bx ; ax=0000 0000 0001 0110
+    35 00000029 0FB7C8                          movzx ecx, ax; ecx= 0000 0000 0000 0000 0000 0000 0001 0110
+    36 0000002C 66BB0000                        mov bx, 0; golim bx ul pentru a lucra cu bitii 6-12 a lui A
+    37 00000030 668B1D[00000000]                mov bx, [A]; izolam bitii 6-12 a lui A
+    38 00000037 6681E3C01F                      and bx, 0001111111000000b; bx=0001 0111 1000 0000
+    39 0000003C 66C1E303                        shl bx, 3; bx=1011 1100 0000 0000
+    40 00000040 6609C3                          or bx,ax ; bx=1011 1100 0001 0110
+    41 00000043 0FB7CB                          movzx ecx, bx; ecx=0000 0000 0000 0000 1011 1100 0001 0110b ecx=0000BC16h
+    42 00000046 66B80000                        mov ax,0;aici vom izola bitii lui B
+    43 0000004A 66A1[02000000]                  mov ax, [B];
+    44 00000050 0FB7C0                          movzx eax,ax;eax= 0000 0000 0000 0000 0101 1110 1101 0111
+    45 00000053 C1E010                          shl eax, 16;eax = 0101 1110 1101 0111 0000 0000 0000 0000
+    46 00000056 09C1                            or ecx,eax;ecx 0101 1110 1101 0111 1011 1100 0001 0110 ecx=5ED7BC16h
+    47                                          
+    48                                          ; exit(0)
+    49 00000058 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    50 0000005A FF15[00000000]                  call    [exit]       ; call exit to terminate the program

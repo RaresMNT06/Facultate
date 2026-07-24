@@ -1,0 +1,113 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit,printf,fclose,fopen,fprintf,fread; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll
+     9                                  import printf msvcrt.dll
+    10                                  import fclose msvcrt.dll
+    11                                  import fopen msvcrt.dll
+    12                                  import fprintf msvcrt.dll
+    13                                  import fread msvcrt.dll
+    14                                  
+    15                                      ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+    16                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    17                                  
+    18                                  ; our data is declared here (the variables needed by our program)
+    19                                  segment data use32 class=data
+    20                                      ; ...
+    21 00000000 746578742E74787400          fisier db "text.txt", 0
+    22 00000009 7700000000000000            mod_acces dd "w",0
+    23 00000011 25642000                    format db "%d ", 0
+    24 00000015 00000000                    frecventa_cifra dd 0
+    25 00000019 00000000                    cifra dd 0 
+    26 0000001D 00000000                    descriptor dd 0
+    27 00000021 00<rept>                    text times 2 db 0
+    28 00000023 00000000<rept>              sir_frecventa times 11 dd 0
+    29 0000004F 00000000                    maxim dd 0
+    30 00000053 00000000                    frecventa_cifra_max dd 0
+    31                                      
+    32                                      
+    33                                  ; our code starts here
+    34                                  segment code use32 class=code
+    35                                      start:
+    36                                          ; ...
+    37 00000000 68[09000000]                    push dword mod_acces
+    38 00000005 68[00000000]                    push dword fisier
+    39 0000000A FF15[00000000]                  call [fopen]
+    40 00000010 83C408                          add esp,4*2
+    41                                          
+    42 00000013 A3[1D000000]                    mov [descriptor], eax
+    43 00000018 83F800                          cmp eax, 0
+    44 0000001B 0F84AC000000                    je fin
+    45                                          
+    46                                          citire:
+    47 00000021 FF35[1D000000]                      push dword [descriptor]
+    48 00000027 6A01                                push dword 1
+    49 00000029 6A01                                push dword 1
+    50 0000002B 68[21000000]                        push dword text
+    51 00000030 FF15[00000000]                      call [fread]
+    52 00000036 83C410                              add esp ,4*4
+    53                                              
+    54 00000039 83F801                              cmp eax, 1
+    55 0000003C 752F                                jne gata_citire
+    56                                              
+    57 0000003E 803D[21000000]30                    cmp byte [text], '0'
+    58 00000045 72DA                                jb citire
+    59                                              
+    60 00000047 803D[21000000]30                    cmp byte [text], '0'
+    61 0000004E 77D1                                ja citire
+    62                                              
+    63 00000050 B800000000                          mov eax, 0
+    64 00000055 0FB605[21000000]                    movzx eax, byte [text]
+    65 0000005C 83C030                              add eax, '0'
+    66                                              
+    67 0000005F A3[19000000]                        mov dword [cifra], eax
+    68                                              
+    69 00000064 FF0485[23000000]                    inc dword [sir_frecventa+eax*4]
+    70                                              
+    71 0000006B EBB4                                jmp citire
+    72                                              
+    73                                              
+    74                                          gata_citire:   
+    75 0000006D B900000000                          mov ecx, 0
+    76 00000072 B90A000000                          mov ecx, 10
+    77                                              
+    78                                              bucla_fecv:
+    79                                              
+    80 00000077 8B048D[23000000]                    mov eax, dword [sir_frecventa + ecx * 4]
+    81                                              
+    82 0000007E 3B05[53000000]                      cmp eax, [frecventa_cifra_max]
+    83 00000084 720E                                jb mai_mic
+    84 00000086 A3[53000000]                            mov dword [frecventa_cifra_max], eax
+    85 0000008B 88C8                                    mov al, cl
+    86 0000008D 0430                                    add al, '0'
+    87 0000008F A2[19000000]                            mov [cifra],al
+    88                                              mai_mic:
+    89                                              
+    90 00000094 E2E1                                loop bucla_fecv
+    91                                              
+    92 00000096 FF35[19000000]                  push dword [cifra]
+    93 0000009C 68[11000000]                    push dword format
+    94 000000A1 FF15[00000000]                  call [printf]
+    95 000000A7 83C408                          add esp, 4*2
+    96                                          
+    97 000000AA FF35[53000000]                  push dword [frecventa_cifra_max]
+    98 000000B0 68[11000000]                    push dword format
+    99 000000B5 FF15[00000000]                  call [printf]
+   100 000000BB 83C408                          add esp, 4*2
+   101                                          
+   102                                          
+   103 000000BE FF35[1D000000]                  push dword [descriptor]
+   104 000000C4 FF15[00000000]                  call [fclose]
+   105 000000CA 83C404                          add esp, 4
+   106                                          
+   107                                          
+   108                                          fin:
+   109                                          
+   110                                      
+   111                                          ; exit(0)
+   112 000000CD 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+   113 000000CF FF15[00000000]                  call    [exit]       ; call exit to terminate the program

@@ -1,0 +1,83 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit,fprintf,fopen,fclose            ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll 
+     9                                  import fprintf msvcrt.dll
+    10                                  import fopen msvcrt.dll
+    11                                  import fclose msvcrt.dll ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+    12                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    13                                  
+    14                                  ; our data is declared here (the variables needed by our program)
+    15                                  segment data use32 class=data
+    16                                      ; ...
+    17 00000000 507269766573746520-         sir db "Priveste cerul frumos ", 0
+    17 00000009 636572756C20667275-
+    17 00000012 6D6F732000         
+    18                                      len equ $-sir
+    19 00000017 7700                        mod_acces db "w",0
+    20 00000019 256400                      format db "%d",0
+    21 0000001C 00000000                    descriptor_fisier dd 0
+    22 00000020 00<rept>                    nume_fisier times 100 db 0
+    23 00000084 00000000                    numar_litere dd 0
+    24                                  ; our code starts here
+    25                                  segment code use32 class=code
+    26                                      start:
+    27                                          ; ...
+    28 00000000 BB00000000                      mov ebx, 0
+    29 00000005 BE[00000000]                    mov esi, sir
+    30 0000000A B917000000                      mov ecx, len
+    31 0000000F BF[20000000]                    mov edi, nume_fisier
+    32                                          bucla:
+    33 00000014 AC                                  lodsb
+    34 00000015 3C00                                cmp al, 0
+    35 00000017 746E                                je gata
+    36                                              
+    37 00000019 3C20                                cmp al, ' '
+    38 0000001B 7404                                je fisier
+    39 0000001D AA                                      stosb           ;edi/nume_fisier numele fisierului
+    40 0000001E 43                                      inc ebx                 ;numarul de litere
+    41 0000001F EBF3                                    jmp bucla
+    42                                              
+    43                                              fisier:
+    44 00000021 C6072E                                  mov byte [edi],"."
+    45 00000024 C6470174                                mov byte [edi+1],"t"
+    46 00000028 C6470278                                mov byte [edi+2],"x"
+    47 0000002C C6470374                                mov byte [edi+3],"t"
+    48 00000030 C6470400                                mov byte [edi+4],0
+    49                                                  
+    50 00000034 68[17000000]                            push dword mod_acces
+    51 00000039 68[20000000]                            push dword nume_fisier
+    52 0000003E FF15[00000000]                          call [fopen]
+    53 00000044 83C408                                  add esp,4*2
+    54                                                  
+    55 00000047 A3[1C000000]                            mov [descriptor_fisier], eax
+    56                                                  
+    57 0000004C 881D[84000000]                          mov [numar_litere], bl
+    58                                                  
+    59 00000052 FF35[84000000]                          push dword [numar_litere]
+    60 00000058 68[19000000]                            push dword format
+    61 0000005D FF35[1C000000]                          push dword [descriptor_fisier]
+    62 00000063 FF15[00000000]                          call [fprintf]
+    63 00000069 83C40C                                  add esp, 4*3
+    64                                                  
+    65 0000006C FF35[1C000000]                          push dword [descriptor_fisier]
+    66 00000072 FF15[00000000]                          call [fclose]
+    67 00000078 83C404                                  add esp, 4
+    68                                                  
+    69 0000007B BF[20000000]                            mov edi, nume_fisier
+    70 00000080 BB00000000                              mov ebx, 0
+    71                                                  
+    72                                                  
+    73                                                  
+    74                                                  
+    75                                          
+    76 00000085 E28D                            loop bucla
+    77                                          
+    78                                          gata:
+    79                                          ; exit(0)
+    80 00000087 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    81 00000089 FF15[00000000]                  call    [exit]       ; call exit to terminate the program

@@ -1,0 +1,3 @@
+08.02, 18:00,camion,normala
+23.05, 18:00,tractor,normala
+24.05, 23:00,masina,extraordinara

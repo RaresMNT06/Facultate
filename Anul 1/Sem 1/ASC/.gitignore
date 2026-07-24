@@ -1,0 +1,13 @@
+# Compiled / build artifacts
+*.exe
+*.obj
+*.o
+
+# CMake build folders
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+
+# IDE
+.idea/
+.vs/

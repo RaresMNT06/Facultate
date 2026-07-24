@@ -1,0 +1,15 @@
+     1                                  %ifndef _LAB_8_ASM_
+     2                                  %define _LAB_8_ASM_
+     3                                  
+     4                                  
+     5                                  calcul:
+     6 00000000 66678B442404                mov eax, [esp+4]   
+     7 00000006 66678B4C2408                mov ecx, [esp+8]   
+     8 0000000C 66678B54240C                mov edx, [esp+12]  
+     9                                  
+    10 00000012 6601C8                      add eax, ecx
+    11 00000015 6629D0                      sub eax, edx
+    12                                  
+    13 00000018 C20C00                      ret 12
+    14                                      
+    15                                  %endif

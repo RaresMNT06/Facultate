@@ -1,0 +1,11 @@
+12:03, 12:00,Natura,normala
+07:02,10:00,Reorganizare Buget,extraordinara
+07:02,14:30,Review Sprint Final,normala
+07:02,18:00,Mentenanta Urgenta,extraordinara
+08:02,09:00,Sedinta Departament HR,normala
+09:02,11:00,Update Proiect Mobile,normala
+10:02,15:00,Aprobare Achizitii,extraordinara
+11:02,10:30,Interviu Candidat,normala
+12:02,13:00,Sincronizare Design,normala
+13:02,09:15,Planificare Strategica,extraordinara
+14:02,16:45,Feedback Client,normala

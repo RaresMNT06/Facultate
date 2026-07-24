@@ -1,0 +1,81 @@
+     1                                  bits 32 ; assembling for the 32 bits architecture
+     2                                  
+     3                                  ; declare the EntryPoint (a label defining the very first instruction of the program)
+     4                                  global start        
+     5                                  
+     6                                  ; declare external functions needed by our program
+     7                                  extern exit               ; tell nasm that exit exists even if we won't be defining it
+     8                                  import exit msvcrt.dll    ; exit is a function that ends the calling process. It is defined in msvcrt.dll
+     9                                                            ; msvcrt.dll contains exit, printf and all the other important C-runtime specific functions
+    10                                  
+    11                                  ; our data is declared here (the variables needed by our program)
+    12                                  segment data use32 class=data
+    13                                      ; ...
+    14 00000000 00000000                    res dd 0
+    15 00000004 3412                        a dw 1234h
+    16 00000006 4365                        b dw 6543h
+    17 00000008 00000000                    c dd 0
+    18 0000000C FD                          d db -3
+    19                                  ; our code starts here
+    20                                  segment code use32 class=code
+    21                                      start:
+    22                                          ; ...
+    23 00000000 66B80000                        mov ax, 0
+    24 00000004 66A1[04000000]                  mov ax, word [a]
+    25 0000000A 6625F801                        and ax, 0000000111111000b
+    26 0000000E 66C1E803                        shr ax, 3
+    27 00000012 66BB0000                        mov bx, 0
+    28 00000016 668B1D[06000000]                mov bx, [b]
+    29 0000001D 6683E31C                        and bx, 0000000000011100b
+    30 00000021 66C1EB04                        shr bx, 4
+    31 00000025 6609D8                          or ax, bx
+    32 00000028 66BB0000                        mov bx,  0
+    33 0000002C 668B1D[04000000]                mov bx, [a]
+    34 00000033 6681E3C01F                      and bx, 0001111111000000b
+    35 00000038 66C1E303                        shl bx, 3
+    36 0000003C 6609D8                          or ax, bx
+    37 0000003F BB00000000                      mov ebx, 0
+    38 00000044 F7D3                            not ebx
+    39 00000046 C1E310                          shl ebx, 16
+    40 00000049 09D8                            or eax, ebx
+    41 0000004B A3[08000000]                    mov [c], eax
+    42                                          ;(a + b) / (a * -3 + c) + c
+    43 00000050 668B1D[04000000]                mov bx, [a]
+    44 00000057 66031D[06000000]                add bx, [b];(a+b)
+    45 0000005E 66A1[04000000]                  mov ax, [a]
+    46 00000064 F62D[0C000000]                  imul byte [d]
+    47 0000006A 6699                            cwd
+    48 0000006C 0305[08000000]                  add eax, [c]
+    49 00000072 89C1                            mov ecx, eax
+    50 00000074 6689D8                          mov ax, bx
+    51 00000077 98                              cwde
+    52 00000078 99                              cdq
+    53 00000079 F7F9                            idiv ecx
+    54 0000007B 0305[08000000]                  add eax, dword [c]
+    55 00000081 A3[00000000]                    mov [res], eax
+    56                                  ; Modify the code to solve the given problem.
+    57                                  ; Mark lines that were added/removed/changed with a comment.
+    58                                  ;
+    59                                  ; Given: a - word, b - word, c - double word,s
+    60                                  ;
+    61                                  ; Compute c as follows:
+    62                                  ; - c[0-5] <- a[3-8]
+    63                                  ; - c[6-8] <- b[2-4]
+    64                                  ; - c[9-15] <- a[6-12]
+    65                                  ; - c[16-31] <- 1
+    66                                  ;
+    67                                  ; NOTE: Ranges are 0-indexed and inclusive,
+    68                                  ; e.g. [0-2] means first 3 bits.
+    69                                  ;
+    70                                  ; Compute in the signed representation:
+    71                                  ; res = (a + b) / (a * -3 + c) + c
+    72                                  
+    73                                  
+    74                                      
+    75                                  
+    76                                  
+    77                                      
+    78                                      
+    79                                          ; exit(0)
+    80 00000086 6A00                            push    dword 0      ; push the parameter for exit onto the stack
+    81 00000088 FF15[00000000]                  call    [exit]       ; call exit to terminate the program

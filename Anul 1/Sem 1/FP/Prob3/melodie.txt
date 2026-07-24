@@ -1,0 +1,10 @@
+Vara,Inna,Jazz,01.01.2001
+Noapte,Cargo,Rock,10.10.1995
+Vis,Smiley,Pop,15.03.2012
+Fata,Enigma,Jazz,20.01.1940
+Drum,Vama,Rock,12.05.2005
+Cer,Spitalul de Urgenta,Rock,05.08.2000
+Stele,Loredana,Pop,25.12.2010
+Luna,Vița de Vie,Rock,01.01.2001
+Zbor,Fly Project,Pop,10.09.2008
+Timp,Johnny Raducanu,Jazz,30.11.1985
