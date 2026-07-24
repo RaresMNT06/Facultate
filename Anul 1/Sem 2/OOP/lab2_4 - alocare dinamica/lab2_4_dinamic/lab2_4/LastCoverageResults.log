@@ -1,0 +1,22 @@
+[2026-03-19 23:48:19] [info] Start Program:
+Path:"C:\Users\alexi\Desktop\lab2_4 - alocare dinamica\lab2_4_dinamic\lab2_4\Lab2_4 - Inchiriere masini\x64\Debug\Lab2_4 - Inchiriere masini.exe"
+Arguments:
+Working directory: "C:\Users\alexi\Desktop\lab2_4 - alocare dinamica\lab2_4_dinamic\lab2_4"
+Modules: Selected: C:\Users\alexi\Desktop\lab2_4 - alocare dinamica\lab2_4_dinamic\lab2_4\Lab2_4 - Inchiriere masini\x64\Debug\Lab2_4 - Inchiriere masini.exe Excluded: 
+Sources: Selected: C:\Users\alexi\Desktop\lab2_4 - alocare dinamica\lab2_4_dinamic\lab2_4\Lab2_4 - Inchiriere masini\Lab2_4 - Inchiriere masini Excluded: *Consola.c* *main.c* 
+Log Level: Normal
+Cover Children: 0
+Aggregate by file: 1
+Continue after C++ exception: 0
+Optimized build support: 0
+Export: Binary C:\Users\alexi\AppData\Local\Temp\bp4ickx4.dgo 
+Input coverage: 
+Unified diff: 
+Excluded line regular expressions: 
+Substitute pdb source paths: 
+
+[2026-03-19 23:48:19] [info] Module: C:\Users\alexi\Desktop\lab2_4 - alocare dinamica\lab2_4_dinamic\lab2_4\Lab2_4 - Inchiriere masini\x64\Debug\Lab2_4 - Inchiriere masini.exe is selected because it matches selected pattern: C:\Users\alexi\Desktop\lab2_4 - alocare dinamica\lab2_4_dinamic\lab2_4\Lab2_4 - Inchiriere masini\x64\Debug\Lab2_4 - Inchiriere masini.exe
+[2026-03-19 23:48:57] [info] ----------------------------------------------------
+[2026-03-19 23:48:57] [info] Coverage binary generated in file: C:\Users\alexi\AppData\Local\Temp\bp4ickx4.dgo
+[2026-03-19 23:48:57] [info] ----------------------------------------------------
+[2026-03-19 23:48:57] [error] Your program stop with error code: 1

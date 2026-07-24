@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Domain">
+      <UniqueIdentifier>{a305afec-ceb8-444d-917a-a71721892ea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Repo">
+      <UniqueIdentifier>{053ec508-a785-42bc-8c96-1f99c5235e18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui">
+      <UniqueIdentifier>{b85824fc-f747-416c-83d2-704c67443d3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Service">
+      <UniqueIdentifier>{1966237c-3da7-40f5-a757-ae6621dd7ae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Teste">
+      <UniqueIdentifier>{3ab855fb-8e9f-4506-8527-fc897f06700f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyList">
+      <UniqueIdentifier>{43cd257a-e0d1-4994-b0f0-8eaa3d6614a1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Masina.cpp">
+      <Filter>Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="repo.cpp">
+      <Filter>Repo</Filter>
+    </ClCompile>
+    <ClCompile Include="ui.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="service.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Masina.h">
+      <Filter>Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="repo.h">
+      <Filter>Repo</Filter>
+    </ClInclude>
+    <ClInclude Include="ui.h">
+      <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="service.h">
+      <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="teste.h">
+      <Filter>Teste</Filter>
+    </ClInclude>
+    <ClInclude Include="MyList.h">
+      <Filter>MyList</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

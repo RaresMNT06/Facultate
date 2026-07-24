@@ -1,0 +1,14 @@
+Nota 5:
+v1_lista_muchii_la_incidenta - dai lista muchiilor, primesti matricea de incidenta (neorientat)
+v2_adiacenta_la_incidenta_neorientat - dai matricea de adiacenta, primesti matricea de incidenta (neorientat)
+v3_adiacenta_la_lista_muchii - dai matricea de adiacenta, primesti lista muchiilor (neorientat)
+v4_adiacenta_la_incidenta_orientat - dai matricea de adiacenta, primesti matricea de incidenta (orientat, cu -1)
+v5_apm_kruskal - gaseste arborele partial de cost minim (Kruskal)
+Nota 10:
+v1_drumuri_case_dijkstra - drum minim intre doua case, costurile sunt date direct
+v2_grupuri_prieteni_bfs - gaseste grupurile de prieteni (componente conexe)
+v3_orase_bidirectional_euclidian - drum minim intre doua orase, costul = distanta euclidiana, mers in ambele sensuri
+v4_muchie_punte - verifica daca o muchie e punte (DA/NU)
+v5_orase_unidirectional_euclidian - drum minim intre doua orase, costul = distanta euclidiana, mers intr-un singur sens
+v6_graf_aciclic - verifica daca graful are cicluri (DA/NU)
+v7_atractii_dijkstra - drum minim intre doua atractii turistice, costurile sunt date direct

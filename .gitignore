@@ -1,0 +1,20 @@
+
+# Visual Studio
+.vs/
+*.ipch
+Debug/
+Release/
+x64/
+*.pdb
+*.ilk
+*.obj
+*.exe
+
+**/.vs/
+**/*.ipch
+**/*.suo
+**/*.vsidx
+
+**/*.zip
+**/.idea/
+**/__pycache__/

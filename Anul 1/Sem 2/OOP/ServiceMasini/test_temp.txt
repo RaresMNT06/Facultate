@@ -1,0 +1,3 @@
+CJ01ABC,Toyota,sedan,6
+CJ02DEF,Ford,SUV,13
+CJ03GHI,BMW,sedan,3

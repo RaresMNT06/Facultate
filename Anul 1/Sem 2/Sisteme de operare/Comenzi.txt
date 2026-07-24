@@ -1,0 +1,430 @@
+[mnt@Rares ~]$ ls
+code.c  Stuff.txt  test.txt
+[mnt@Rares ~]$ cd ..
+[mnt@Rares home]$ ls
+mnt  nume_utilizator  rares
+[mnt@Rares home]$ cd ..
+[mnt@Rares /]$ ls
+afs  boot  etc   init  lib64       media  opt   root  sbin  sys  usr
+bin  dev   home  lib   lost+found  mnt    proc  run   srv   tmp  var
+[mnt@Rares /]$ cd usr/
+[mnt@Rares usr]$ ls
+bin  games  include  lib  lib64  libexec  local  sbin  share  src  tmp
+[mnt@Rares usr]$ cd tmp/
+[mnt@Rares tmp]$ ls
+HELLO.txt.swp
+systemd-private-2db78c8c20034a5fb745b76af67c6be6-dbus-broker.service-HgayOu
+systemd-private-2db78c8c20034a5fb745b76af67c6be6-systemd-logind.service-vkM2AO
+[mnt@Rares tmp]$ cd ..
+[mnt@Rares usr]$ ls
+bin  games  include  lib  lib64  libexec  local  sbin  share  src  tmp
+[mnt@Rares usr]$ cd bin/
+[mnt@Rares bin]$ ls
+'['                     gpg-card             paste                      systemd-run
+ alias                  gpgconf              pathchk                    systemd-socket-activate
+ apropos                gpg-connect-agent    peekfd                     systemd-stdio-bridge
+ apropos.man-db         gpg-error            pgrep                      systemd-sysext
+ arch                   gpgme-json           pic                        systemd-sysusers
+ arping                 gpgparsemail         pidof                      systemd-tmpfiles
+ attr                   gpgsplit             pidwait                    systemd-tty-ask-password-agent
+ awk                    gpgtar               ping                       systemd-umount
+ b2sum                  gpgv                 pinky                      tabs
+ base32                 gpgv2                pkgconf                    tac
+ base64                 gpg-wks-client       pkg-config                 tail
+ basename               gpg-wks-server       pkill                      tar
+ basenc                 gpic                 pldd                       taskset
+ bash                   grep                 pmap                       tbl
+ bashbug                groff                post-grohtml               tee
+ bashbug-64             grops                pr                         test
+ bg                     grotty               preconv                    tic
+ bunzip2                groups               pre-grohtml                timedatectl
+ busctl                 gsettings            printenv                   timeout
+ bzcat                  gsoelim              printf                     tload
+ bzcmp                  gtar                 prlimit                    tmux
+ bzdiff                 gtbl                 prtstat                    toe
+ bzegrep                gtroff               ps                         top
+ bzfgrep                gunzip               pslog                      touch
+ bzgrep                 gzexe                pstree                     tput
+ bzip2                  gzip                 pstree.x11                 tr
+ bzip2recover           hardlink             ptx                        tracepath
+ bzless                 hash                 pwd                        troff
+ bzmore                 head                 pwdx                       true
+ cal                    hexdump              pwmake                     truncate
+ ca-legacy              hostid               pwscore                    trust
+ captoinfo              hostname             pydoc                      tset
+ cat                    hostnamectl          pydoc3                     tsort
+ catchsegv              i386                 pydoc3.9                   tty
+ catman                 iconv                python                     type
+ cd                     id                   python3                    tzselect
+ chacl                  ima-add-sigs         python3.9                  ul
+ chage                  ima-setup            pzstd                      ulimit
+ chcon                  infocmp              read                       umask
+ chgrp                  infotocap            readlink                   umount
+ chmem                  install              realpath                   unalias
+ chmod                  ionice               rename                     uname
+ choom                  ipcmk                renew-dummy-cert           uname26
+ chown                  ipcrm                renice                     unexpand
+ chrt                   ipcs                 reset                      uniq
+ cksum                  irqtop               rev                        unlink
+ clear                  isosize              rm                         unshare
+ clockdiff              jobs                 rmdir                      unxz
+ col                    join                 rnano                      unzip
+ colcrt                 journalctl           rpm                        unzipsfx
+ colrm                  jq                   rpm2archive                unzstd
+ column                 keyctl               rpm2cpio                   update-ca-trust
+ comm                   kill                 rpmdb                      update-crypto-policies
+ command                killall              rpmkeys                    uptime
+ cp                     last                 rpmquery                   users
+ csplit                 lastb                rpmverify                  utmpdump
+ curl                   lastlog              runcon                     uuidgen
+ cut                    lchfn                rvim                       uuidparse
+ cvtsudoers             lchsh                scp                        vdir
+ cyrusbdb2current       ldd                  script                     vim
+ date                   ld.so                scriptlive                 vimdiff
+ dbus-broker            less                 scriptreplay               vimtutor
+ dbus-broker-launch     lessecho             sed                        vmstat
+ dd                     lesskey              seq                        w
+ df                     lesspipe.sh          setarch                    wait
+ dir                    lexgrog              setfacl                    wall
+ dircolors              link                 setfattr                   watch
+ dirmngr                linux32              setpriv                    watchgnupg
+ dirmngr-client         linux64              setsid                     wc
+ dirname                ln                   setterm                    wdctl
+ dmesg                  locale               sftp                       wget
+ dnf                    localectl            sg                         whatis
+ dnf-3                  localedef            sh                         whatis.man-db
+ dnf4                   logger               sha1sum                    whereis
+ dnsdomainname          login                sha224sum                  which
+ domainname             loginctl             sha256sum                  who
+ du                     logname              sha384sum                  whoami
+ echo                   look                 sha512sum                  write
+ egrep                  ls                   shred                      wslinfo
+ eject                  lsblk                shuf                       wslpath
+ env                    lscpu                skill                      x86_64
+ eqn                    lsipc                slabtop                    x86_64-redhat-linux-gnu-pkg-config
+ evmctl                 lsirq                sleep                      xargs
+ expand                 lslocks              snice                      xmlcatalog
+ expr                   lslogins             soelim                     xmllint
+ factor                 lsmem                soelim.groff               xmlwf
+ fallocate              lsns                 sort                       xxd
+ false                  make-dummy-cert      sotruss                    xz
+ fc                     man                  split                      xzcat
+ fg                     mandb                sprof                      xzcmp
+ fgrep                  man.man-db           ssh                        xzdec
+ file                   manpath              ssh-add                    xzdiff
+ fincore                man-recode           ssh-agent                  xzegrep
+ find                   mcookie              ssh-copy-id                xzfgrep
+ findmnt                md5sum               ssh-keygen                 xzgrep
+ fips-finish-install    mesg                 ssh-keyscan                xzless
+ fips-mode-setup        mkdir                stat                       xzmore
+ flock                  mkfifo               stdbuf                     yes
+ fmt                    mknod                stty                       ypdomainname
+ fold                   mktemp               su                         zcat
+ free                   modulemd-validator   sudo                       zcmp
+ funzip                 more                 sudoedit                   zdiff
+ g13                    mount                sudoreplay                 zdump
+ gapplication           mountpoint           sum                        zegrep
+ gawk                   mv                   sync                       zfgrep
+ gdbus                  namei                systemctl                  zforce
+ gencat                 nano                 systemd-analyze            zgrep
+ geqn                   neqn                 systemd-ask-password       zip
+ getconf                newgidmap            systemd-cat                zipcloak
+ getent                 newgrp               systemd-cgls               zipgrep
+ getfacl                newuidmap            systemd-cgtop              zipinfo
+ getfattr               nice                 systemd-creds              zipnote
+ getopt                 nisdomainname        systemd-delta              zipsplit
+ getopts                nl                   systemd-detect-virt        zless
+ gio                    nohup                systemd-dissect            zmore
+ gio-querymodules-64    nproc                systemd-escape             znew
+ glib-compile-schemas   nroff                systemd-firstboot          zsoelim
+ gneqn                  nsenter              systemd-id128              zstd
+ gnroff                 numfmt               systemd-inhibit            zstdcat
+ gpasswd                od                   systemd-machine-id-setup   zstdgrep
+ gpg                    openssl              systemd-mount              zstdless
+ gpg2                   p11-kit              systemd-notify             zstdmt
+ gpg-agent              passwd               systemd-path
+[mnt@Rares bin]$
+[mnt@Rares bin]$ whoami
+mnt
+[mnt@Rares bin]$ cat /etc/passwd
+\root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+nobody:x:65534:65534:Kernel Overflow User:/:/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+tss:x:59:59:Account used for TPM access:/:/usr/sbin/nologin
+mnt:x:1000:1000::/home/mnt:/bin/bash
+nume_utilizator:x:1001:1001::/home/nume_utilizator:/bin/bash
+rares:x:1002:1002::/home/rares:/bin/bash
+[mnt@Rares bin]$ groups mnt
+mnt : mnt adm wheel cdrom
+[mnt@Rares bin]$ sudo -i
+[sudo] password for mnt:
+[root@Rares ~]#
+logout
+[mnt@Rares bin]$
+[mnt@Rares bin]$ ls
+'['                     gpg-card             paste                      systemd-run
+ alias                  gpgconf              pathchk                    systemd-socket-activate
+ apropos                gpg-connect-agent    peekfd                     systemd-stdio-bridge
+ apropos.man-db         gpg-error            pgrep                      systemd-sysext
+ arch                   gpgme-json           pic                        systemd-sysusers
+ arping                 gpgparsemail         pidof                      systemd-tmpfiles
+ attr                   gpgsplit             pidwait                    systemd-tty-ask-password-agent
+ awk                    gpgtar               ping                       systemd-umount
+ b2sum                  gpgv                 pinky                      tabs
+ base32                 gpgv2                pkgconf                    tac
+ base64                 gpg-wks-client       pkg-config                 tail
+ basename               gpg-wks-server       pkill                      tar
+ basenc                 gpic                 pldd                       taskset
+ bash                   grep                 pmap                       tbl
+ bashbug                groff                post-grohtml               tee
+ bashbug-64             grops                pr                         test
+ bg                     grotty               preconv                    tic
+ bunzip2                groups               pre-grohtml                timedatectl
+ busctl                 gsettings            printenv                   timeout
+ bzcat                  gsoelim              printf                     tload
+ bzcmp                  gtar                 prlimit                    tmux
+ bzdiff                 gtbl                 prtstat                    toe
+ bzegrep                gtroff               ps                         top
+ bzfgrep                gunzip               pslog                      touch
+ bzgrep                 gzexe                pstree                     tput
+ bzip2                  gzip                 pstree.x11                 tr
+ bzip2recover           hardlink             ptx                        tracepath
+ bzless                 hash                 pwd                        troff
+ bzmore                 head                 pwdx                       true
+ cal                    hexdump              pwmake                     truncate
+ ca-legacy              hostid               pwscore                    trust
+ captoinfo              hostname             pydoc                      tset
+ cat                    hostnamectl          pydoc3                     tsort
+ catchsegv              i386                 pydoc3.9                   tty
+ catman                 iconv                python                     type
+ cd                     id                   python3                    tzselect
+ chacl                  ima-add-sigs         python3.9                  ul
+ chage                  ima-setup            pzstd                      ulimit
+ chcon                  infocmp              read                       umask
+ chgrp                  infotocap            readlink                   umount
+ chmem                  install              realpath                   unalias
+ chmod                  ionice               rename                     uname
+ choom                  ipcmk                renew-dummy-cert           uname26
+ chown                  ipcrm                renice                     unexpand
+ chrt                   ipcs                 reset                      uniq
+ cksum                  irqtop               rev                        unlink
+ clear                  isosize              rm                         unshare
+ clockdiff              jobs                 rmdir                      unxz
+ col                    join                 rnano                      unzip
+ colcrt                 journalctl           rpm                        unzipsfx
+ colrm                  jq                   rpm2archive                unzstd
+ column                 keyctl               rpm2cpio                   update-ca-trust
+ comm                   kill                 rpmdb                      update-crypto-policies
+ command                killall              rpmkeys                    uptime
+ cp                     last                 rpmquery                   users
+ csplit                 lastb                rpmverify                  utmpdump
+ curl                   lastlog              runcon                     uuidgen
+ cut                    lchfn                rvim                       uuidparse
+ cvtsudoers             lchsh                scp                        vdir
+ cyrusbdb2current       ldd                  script                     vim
+ date                   ld.so                scriptlive                 vimdiff
+ dbus-broker            less                 scriptreplay               vimtutor
+ dbus-broker-launch     lessecho             sed                        vmstat
+ dd                     lesskey              seq                        w
+ df                     lesspipe.sh          setarch                    wait
+ dir                    lexgrog              setfacl                    wall
+ dircolors              link                 setfattr                   watch
+ dirmngr                linux32              setpriv                    watchgnupg
+ dirmngr-client         linux64              setsid                     wc
+ dirname                ln                   setterm                    wdctl
+ dmesg                  locale               sftp                       wget
+ dnf                    localectl            sg                         whatis
+ dnf-3                  localedef            sh                         whatis.man-db
+ dnf4                   logger               sha1sum                    whereis
+ dnsdomainname          login                sha224sum                  which
+ domainname             loginctl             sha256sum                  who
+ du                     logname              sha384sum                  whoami
+ echo                   look                 sha512sum                  write
+ egrep                  ls                   shred                      wslinfo
+ eject                  lsblk                shuf                       wslpath
+ env                    lscpu                skill                      x86_64
+ eqn                    lsipc                slabtop                    x86_64-redhat-linux-gnu-pkg-config
+ evmctl                 lsirq                sleep                      xargs
+ expand                 lslocks              snice                      xmlcatalog
+ expr                   lslogins             soelim                     xmllint
+ factor                 lsmem                soelim.groff               xmlwf
+ fallocate              lsns                 sort                       xxd
+ false                  make-dummy-cert      sotruss                    xz
+ fc                     man                  split                      xzcat
+ fg                     mandb                sprof                      xzcmp
+ fgrep                  man.man-db           ssh                        xzdec
+ file                   manpath              ssh-add                    xzdiff
+ fincore                man-recode           ssh-agent                  xzegrep
+ find                   mcookie              ssh-copy-id                xzfgrep
+ findmnt                md5sum               ssh-keygen                 xzgrep
+ fips-finish-install    mesg                 ssh-keyscan                xzless
+ fips-mode-setup        mkdir                stat                       xzmore
+ flock                  mkfifo               stdbuf                     yes
+ fmt                    mknod                stty                       ypdomainname
+ fold                   mktemp               su                         zcat
+ free                   modulemd-validator   sudo                       zcmp
+ funzip                 more                 sudoedit                   zdiff
+ g13                    mount                sudoreplay                 zdump
+ gapplication           mountpoint           sum                        zegrep
+ gawk                   mv                   sync                       zfgrep
+ gdbus                  namei                systemctl                  zforce
+ gencat                 nano                 systemd-analyze            zgrep
+ geqn                   neqn                 systemd-ask-password       zip
+ getconf                newgidmap            systemd-cat                zipcloak
+ getent                 newgrp               systemd-cgls               zipgrep
+ getfacl                newuidmap            systemd-cgtop              zipinfo
+ getfattr               nice                 systemd-creds              zipnote
+ getopt                 nisdomainname        systemd-delta              zipsplit
+ getopts                nl                   systemd-detect-virt        zless
+ gio                    nohup                systemd-dissect            zmore
+ gio-querymodules-64    nproc                systemd-escape             znew
+ glib-compile-schemas   nroff                systemd-firstboot          zsoelim
+ gneqn                  nsenter              systemd-id128              zstd
+ gnroff                 numfmt               systemd-inhibit            zstdcat
+ gpasswd                od                   systemd-machine-id-setup   zstdgrep
+ gpg                    openssl              systemd-mount              zstdless
+ gpg2                   p11-kit              systemd-notify             zstdmt
+ gpg-agent              passwd               systemd-path
+[mnt@Rares bin]$ pwd
+/usr/bin
+[mnt@Rares bin]$ cd
+[mnt@Rares ~]$ ls
+code.c  Stuff.txt  test.txt
+[mnt@Rares ~]$ vim code.c
+[mnt@Rares ~]$ pwd
+/home/mnt
+[mnt@Rares ~]$ ls
+code.c  Stuff.txt  test.txt
+[mnt@Rares ~]$ vim code.c
+[mnt@Rares ~]$ gcc -Wall -Wextra -Werror -g -o code code.c
+-bash: gcc: command not found
+[mnt@Rares ~]$ sudo -i
+[root@Rares ~]# cat /etc/redhat-release
+AlmaLinux release 9.7 (Moss Jungle Cat)
+[root@Rares ~]# dnf install gcc
+Last metadata expiration check: 0:29:35 ago on Wed 25 Feb 2026 08:30:17 AM EET.
+Dependencies resolved.
+========================================================================================================================
+ Package                               Architecture      Version                             Repository            Size
+========================================================================================================================
+Installing:
+ gcc                                   x86_64            11.5.0-11.el9.alma.1                appstream             32 M
+Installing dependencies:
+ binutils                              x86_64            2.35.2-67.el9_7.1                   baseos               4.5 M
+ binutils-gold                         x86_64            2.35.2-67.el9_7.1                   baseos               734 k
+ cpp                                   x86_64            11.5.0-11.el9.alma.1                appstream             11 M
+ elfutils-debuginfod-client            x86_64            0.193-1.el9.alma.1                  baseos                43 k
+ glibc-devel                           x86_64            2.34-231.el9_7.2                    appstream             35 k
+ glibc-headers                         x86_64            2.34-231.el9_7.2                    appstream            441 k
+ kernel-headers                        x86_64            5.14.0-611.34.1.el9_7               appstream            2.7 M
+ libmpc                                x86_64            1.2.1-4.el9                         appstream             61 k
+ libxcrypt-devel                       x86_64            4.4.18-3.el9                        appstream             28 k
+ make                                  x86_64            1:4.3-8.el9                         baseos               530 k
+
+Transaction Summary
+========================================================================================================================
+Install  11 Packages
+
+Total download size: 52 M
+Installed size: 151 M
+Is this ok [y/N]: y
+Downloading Packages:
+(1/11): glibc-devel-2.34-231.el9_7.2.x86_64.rpm                                          75 kB/s |  35 kB     00:00
+(2/11): glibc-headers-2.34-231.el9_7.2.x86_64.rpm                                       238 kB/s | 441 kB     00:01
+(3/11): cpp-11.5.0-11.el9.alma.1.x86_64.rpm                                             931 kB/s |  11 MB     00:11
+(4/11): libmpc-1.2.1-4.el9.x86_64.rpm                                                    73 kB/s |  61 kB     00:00
+(5/11): libxcrypt-devel-4.4.18-3.el9.x86_64.rpm                                          55 kB/s |  28 kB     00:00
+(6/11): kernel-headers-5.14.0-611.34.1.el9_7.x86_64.rpm                                 164 kB/s | 2.7 MB     00:16
+(7/11): binutils-2.35.2-67.el9_7.1.x86_64.rpm                                           611 kB/s | 4.5 MB     00:07
+(8/11): binutils-gold-2.35.2-67.el9_7.1.x86_64.rpm                                      303 kB/s | 734 kB     00:02
+(9/11): elfutils-debuginfod-client-0.193-1.el9.alma.1.x86_64.rpm                         46 kB/s |  43 kB     00:00
+(10/11): make-4.3-8.el9.x86_64.rpm                                                      275 kB/s | 530 kB     00:01
+(11/11): gcc-11.5.0-11.el9.alma.1.x86_64.rpm                                            656 kB/s |  32 MB     00:50
+------------------------------------------------------------------------------------------------------------------------
+Total                                                                                   1.0 MB/s |  52 MB     00:52
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                1/1
+  Installing       : elfutils-debuginfod-client-0.193-1.el9.alma.1.x86_64                                          1/11
+  Installing       : binutils-gold-2.35.2-67.el9_7.1.x86_64                                                        2/11
+  Installing       : binutils-2.35.2-67.el9_7.1.x86_64                                                             3/11
+  Running scriptlet: binutils-2.35.2-67.el9_7.1.x86_64                                                             3/11
+  Installing       : libmpc-1.2.1-4.el9.x86_64                                                                     4/11
+  Installing       : cpp-11.5.0-11.el9.alma.1.x86_64                                                               5/11
+  Installing       : make-1:4.3-8.el9.x86_64                                                                       6/11
+  Installing       : kernel-headers-5.14.0-611.34.1.el9_7.x86_64                                                   7/11
+  Installing       : glibc-headers-2.34-231.el9_7.2.x86_64                                                         8/11
+  Installing       : libxcrypt-devel-4.4.18-3.el9.x86_64                                                           9/11
+  Installing       : glibc-devel-2.34-231.el9_7.2.x86_64                                                          10/11
+  Installing       : gcc-11.5.0-11.el9.alma.1.x86_64                                                              11/11
+  Running scriptlet: gcc-11.5.0-11.el9.alma.1.x86_64                                                              11/11
+  Verifying        : cpp-11.5.0-11.el9.alma.1.x86_64                                                               1/11
+  Verifying        : gcc-11.5.0-11.el9.alma.1.x86_64                                                               2/11
+  Verifying        : glibc-devel-2.34-231.el9_7.2.x86_64                                                           3/11
+  Verifying        : glibc-headers-2.34-231.el9_7.2.x86_64                                                         4/11
+  Verifying        : kernel-headers-5.14.0-611.34.1.el9_7.x86_64                                                   5/11
+  Verifying        : libmpc-1.2.1-4.el9.x86_64                                                                     6/11
+  Verifying        : libxcrypt-devel-4.4.18-3.el9.x86_64                                                           7/11
+  Verifying        : binutils-2.35.2-67.el9_7.1.x86_64                                                             8/11
+  Verifying        : binutils-gold-2.35.2-67.el9_7.1.x86_64                                                        9/11
+  Verifying        : elfutils-debuginfod-client-0.193-1.el9.alma.1.x86_64                                         10/11
+  Verifying        : make-1:4.3-8.el9.x86_64                                                                      11/11
+
+Installed:
+  binutils-2.35.2-67.el9_7.1.x86_64                   binutils-gold-2.35.2-67.el9_7.1.x86_64
+  cpp-11.5.0-11.el9.alma.1.x86_64                     elfutils-debuginfod-client-0.193-1.el9.alma.1.x86_64
+  gcc-11.5.0-11.el9.alma.1.x86_64                     glibc-devel-2.34-231.el9_7.2.x86_64
+  glibc-headers-2.34-231.el9_7.2.x86_64               kernel-headers-5.14.0-611.34.1.el9_7.x86_64
+  libmpc-1.2.1-4.el9.x86_64                           libxcrypt-devel-4.4.18-3.el9.x86_64
+  make-1:4.3-8.el9.x86_64
+
+Complete!
+[root@Rares ~]#
+logout
+[mnt@Rares ~]$ gcc -Wall -Wextra -Werror -g -o code code.c
+code.c: In function ‘main’:
+code.c:3:9: error: implicit declaration of function ‘printf’ [-Werror=implicit-function-declaration]
+    3 |         printf("Heloo\n");
+      |         ^~~~~~
+code.c:1:1: note: include ‘<stdio.h>’ or provide a declaration of ‘printf’
+  +++ |+#include <stdio.h>
+    1 | int main()
+code.c:3:9: error: incompatible implicit declaration of built-in function ‘printf’ [-Werror=builtin-declaration-mismatc]
+    3 |         printf("Heloo\n");
+      |         ^~~~~~
+code.c:3:9: note: include ‘<stdio.h>’ or provide a declaration of ‘printf’
+cc1: all warnings being treated as errors
+[mnt@Rares ~]$ vim code.c
+[mnt@Rares ~]$ gcc -Wall -Wextra -Werror -g -o code code.c
+[mnt@Rares ~]$
+[mnt@Rares ~]$ gcc -Wall -Wextra -Werror -g -o code code.c
+[mnt@Rares ~]$ vim code.c
+[mnt@Rares ~]$ gcc -Wall -Wextra -Werror -g -o code code.c
+[mnt@Rares ~]$ vim code.c
+[mnt@Rares ~]$ code.c
+-bash: code.c: command not found
+[mnt@Rares ~]$ less
+Missing filename ("less --help" for help)
+[mnt@Rares ~]$ ls
+code  code.c  Stuff.txt  test.txt
+[mnt@Rares ~]$ code
+/mnt/c/Users/rares/AppData/Local/Programs/Microsoft VS Code/bin/code: line 62: /mnt/c/Users/rares/AppData/Local/Programs/Microsoft VS Code/Code.exe: cannot execute binary file: Exec format error
+[mnt@Rares ~]$ ls
+code  code.c  Stuff.txt  test.txt
+[mnt@Rares ~]$ ./code
+Heloo

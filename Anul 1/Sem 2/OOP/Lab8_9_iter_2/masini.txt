@@ -1,0 +1,10 @@
+CJ 01 ABC,Dacia,Logan,berlina,0
+IS 03 AAA,Toyota,Corolla,sedan,0
+B 04 BBB,Renault,Megane,hatchback,1
+MM 05 CCC,Volkswagen,Golf,hatchback,0
+CJ 06 DDD,Audi,A4,berlina,0
+CJ 07 EEE,Mercedes,GLC,SUV,1
+B 08 FFF,Skoda,Octavia,berlina,0
+IS 09 GGG,Hyundai,Tucson,SUV,0
+MM 10 HHH,Ford,Fiesta,hatchback,1
+CJ 02 XYZ,BMW,X5,SUV,1

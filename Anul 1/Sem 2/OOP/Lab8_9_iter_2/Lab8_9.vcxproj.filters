@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Domain">
+      <UniqueIdentifier>{14569077-77ff-4c16-9803-a4ef9dcf66c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Repo">
+      <UniqueIdentifier>{7763522a-0fc3-4bb1-9212-8c434e6ac9c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Service">
+      <UniqueIdentifier>{a92118ed-8fc7-4cd1-8996-1c8a84b47694}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui">
+      <UniqueIdentifier>{ad71f77c-d940-4d2f-9640-f5bdc7d663cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Teste">
+      <UniqueIdentifier>{0d092d67-bde6-4bb7-9c94-17417934b3ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Exceptii">
+      <UniqueIdentifier>{b3a74a2f-35fd-44c2-adb6-727499f3cd6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DTO">
+      <UniqueIdentifier>{c8e15d9b-4e2c-4f3a-9a1f-8d5e2c4a6b7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Undo">
+      <UniqueIdentifier>{d8e26eac-5f3d-5g4b-ab2g-9e6f3d5b7c8f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="masini.cpp">
+      <Filter>Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="service.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+    <ClCompile Include="ui.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="repo.cpp">
+      <Filter>Repo</Filter>
+    </ClCompile>
+    <ClCompile Include="repo_dictionar.cpp">
+      <Filter>Repo</Filter>
+    </ClCompile>
+    <ClCompile Include="teste.cpp">
+      <Filter>Teste</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="masini.h">
+      <Filter>Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="repo.h">
+      <Filter>Repo</Filter>
+    </ClInclude>
+    <ClInclude Include="repo_abstract.h">
+      <Filter>Repo</Filter>
+    </ClInclude>
+    <ClInclude Include="repo_dictionar.h">
+      <Filter>Repo</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptii.h">
+      <Filter>Exceptii</Filter>
+    </ClInclude>
+    <ClInclude Include="service.h">
+      <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="ui.h">
+      <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="teste.h">
+      <Filter>Teste</Filter>
+    </ClInclude>
+    <ClInclude Include="dto.h">
+      <Filter>DTO</Filter>
+    </ClInclude>
+    <ClInclude Include="actiune_undo.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

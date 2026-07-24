@@ -1,0 +1,10 @@
+CJ01ABC,Toyota,sedan,6
+CJ02DEF,Ford,SUV,13
+CJ03GHI,BMW,cabriolet,3
+CJ04JKL,Dacia,camioneta,9
+CJ05MNO,Volkswagen,sedan,17
+CJ06PQR,Audi,SUV,8
+CJ07STU,Mercedes,cabriolet,2
+CJ08VWX,Renault,camioneta,12
+CJ09YZA,Opel,sedan,7
+CJ10BCD,Hyundai,SUV,11
