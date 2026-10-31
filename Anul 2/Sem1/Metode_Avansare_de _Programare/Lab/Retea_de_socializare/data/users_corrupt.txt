@@ -1,0 +1,7 @@
+1;Ion;Pop;ion@gmail.com;parola123
+abc;Ana;Ilie;ana@gmail.com;anaparola
+3;dan;Rus;dan@gmail.com;danparola
+4;Maria;Pop
+5;Vlad;Ene;vlad-gmail.com;123
+1;Dup;Licat;dup@gmail.com;dupparola
+6;Ioana;Moldovan;ioana@gmail.com;ioana2026

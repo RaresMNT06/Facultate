@@ -18,3 +18,13 @@ x64/
 **/*.zip
 **/.idea/
 **/__pycache__/
+
+### Fisiere generate (Java / IntelliJ) ###
+out/
+build/
+*.class
+docs/
+
+### Arhive ###
+*.zip
+*.rar
