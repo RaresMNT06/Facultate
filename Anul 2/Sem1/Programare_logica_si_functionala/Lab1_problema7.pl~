@@ -1,0 +1,66 @@
+
+%A
+% apartine(E: element, L: lista)
+% E - elementul cautat
+% L - lista in care se cauta
+% model de flux (i, i)
+apartine(E, [E|_]).
+apartine(E, [H|T]) :-
+    E\=H,
+    apartine(E, T).
+
+% reuniune(L: lista, K: lista, R: lista)
+% L - prima multime
+% K - a doua multime
+% R - reuniunea multimilor L si K
+% model de flux (i, i, o), (i, i, i)
+reuniune([], K, K).
+reuniune([H|T], K, R) :-
+    apartine(H, K),
+    reuniune(T, K, R).
+reuniune([H|T], K, [H|R]) :-
+    \+ apartine(H, K),
+    reuniune(T, K, R).
+
+
+% Exemple de testare:
+% ?- apartine(2, [1,2,3]).               true
+% ?- apartine(5, [1,2,3]).               false
+% ?- apartine(1, []).                    false
+% ?- reuniune([1,2,3], [2,4,5], R).      R = [1,3,2,4,5]
+% ?- reuniune([], [1,2], R).             R = [1,2]
+% ?- reuniune([1,2], [], R).             R = [1,2]
+% ?- reuniune([1,2], [1,2], R).          R = [1,2]
+% ?- reuniune([], [], R).                R = []
+
+
+%B
+% adaugaPerechi(E: element, L: lista, C: lista de liste, R: lista de liste)
+% E - elementul care formeaza perechi cu fiecare element din L
+% L - lista de elemente
+% C - colectorul (perechile deja construite, puse la final)
+% R - rezultatul: perechile [E, Li] urmate de C
+% model de flux (i, i, i, o), (i, i, i, i)
+
+adaugaPerechi(_, [], C, C).
+adaugaPerechi(E, [H|T], C, [[E, H]|R]) :-
+    adaugaPerechi(E, T, C, R).
+
+% perechi(L: lista, R: lista de liste)
+% L - lista data
+% R - lista tuturor perechilor din L
+% model de flux (i, o), (i, i)
+
+perechi([], []).
+perechi([_], []).
+perechi([H1, H2|T], R) :-
+    perechi([H2|T], R1),
+    adaugaPerechi(H1, [H2|T], R1, R).
+
+% Exemple de testare:
+% ?- adaugaPerechi(a, [b,c], [[x,y]], R). R = [[a,b],[a,c],[x,y]]
+% ?- perechi([a,b,c,d], R).   R = [[a,b],[a,c],[a,d],[b,c],[b,d],[c,d]]
+% ?- perechi([1,2,3], R).     R = [[1,2],[1,3],[2,3]]
+% ?- perechi([a,b], R).       R = [[a,b]]
+% ?- perechi([a], R).         R = []
+% ?- perechi([], R).          R = []
