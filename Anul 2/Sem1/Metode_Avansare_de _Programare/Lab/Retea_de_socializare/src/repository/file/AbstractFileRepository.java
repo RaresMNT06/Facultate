@@ -4,96 +4,96 @@ import exceptions.RepositoryException;
 import exceptions.ValidationException;
 import model.Entity;
 import repository.InMemoryRepository;
-import repository.Repository;
 import validators.Validator;
 
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.format.DateTimeParseException;
-
-
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
- * Repository care pastreaza entitatile in memorie si le salveaza intr-un fisier.
- * Template Method: algoritmul de citire/scriere este fix, iar conversia
- * linie - entitate este lasata subclaselor.
+ * Repository care pastreaza entitatile in memorie si intr-un fisier text (cate o entitate pe linie).
+ * Template Method: incarcarea si salvarea sunt scrise aici, o singura data;
+ * subclasele spun doar cum se transforma o linie in entitate si invers.
  *
- * @param <ID> tipul identificatorului
- * @param <E>  tipul entitatilor
+ * @param <ID> - tipul identificatorului
+ * @param <E>  - tipul entitatilor salvate
  */
-
 public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends InMemoryRepository<ID, E> {
 
-    private final String fileName;
+    private final Path path;
 
     /**
-     * @param validator strategia de validare
-     * @param fileName  calea catre fisier
+     * creeaza repository-ul si incarca entitatile din fisier
+     *
+     * @param validator - strategia de validare pentru entitati
+     * @param fileName  - calea catre fisierul text
      */
     public AbstractFileRepository(Validator<E> validator, String fileName) {
         super(validator);
-        this.fileName = fileName;
+        this.path = Path.of(fileName);
         loadData();
     }
 
-
     /**
-     * Transforma o linie din fisier intr-o entitate.
+     * transforma o linie din fisier intr-o entitate
      *
-     * @param line linia citita
-     * @return entitatea creata
+     * @param line - o linie din fisier
+     * @return entitatea descrisa de linie
      */
     protected abstract E extractEntity(String line);
 
-
     /**
-     * Transforma o entitate intr-o linie de fisier.
+     * transforma o entitate intr-o linie de fisier
      *
-     * @param entity entitatea de scris
-     * @return linia corespunzatoare
+     * @param entity - entitatea de transformat
+     * @return linia de text care descrie entitatea
      */
     protected abstract String createEntityAsString(E entity);
 
     /**
-     * citeste toate liniile din fisier si salveaza entitatile in memorie;
-     * daca fisierul nu exista, repository-ul porneste gol;
-     * o linie corupta sau invalida este raportata (numarul liniei si motivul) si ignorata
+     * citeste fisierul cu Files.lines si incarca fiecare linie, pastrand numarul liniei;
+     * daca fisierul nu exista, repository-ul porneste gol
      *
      * @throws RepositoryException daca fisierul exista, dar nu poate fi citit
      */
     private void loadData() {
-        File file = new File(fileName);
-        if (!file.exists()) {
-            System.out.println("File " + fileName + " does not exist; the repository starts empty.");
+        if (!Files.exists(path)) {
+            System.out.println("File " + path + " does not exist; the repository starts empty.");
             return;
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            String line;
-            int lineNumber = 0;
-            while ((line = reader.readLine()) != null) {
-                lineNumber++;
-                if (line.isBlank()) {
-                    continue;
-                }
-                try {
-                    E entity = parseLine(line);
-                    if (super.save(entity) != null) {
-                        System.out.println("Warning: " + fileName + ", line " + lineNumber
-                                + " ignored: duplicate id " + entity.getId());
-                    }
-                } catch (RepositoryException | ValidationException e) {
-                    System.out.println("Warning: " + fileName + ", line " + lineNumber
-                            + " ignored: " + e.getMessage());
-                }
+        try (Stream<String> fileLines = Files.lines(path, StandardCharsets.UTF_8)) {
+            List<String> lines = fileLines.toList();
+            IntStream.range(0, lines.size())
+                    .forEach(i -> loadLine(lines.get(i), i + 1));
+        } catch (IOException | UncheckedIOException e) {
+            throw new RepositoryException("Cannot read file " + path, e);
+        }
+    }
+
+    /**
+     * incarca o singura linie; o linie corupta sau invalida este raportata si ignorata
+     *
+     * @param line       - linia din fisier
+     * @param lineNumber - numarul liniei (de la 1), pentru mesaje
+     */
+    private void loadLine(String line, int lineNumber) {
+        if (line.isBlank()) {
+            return;
+        }
+        try {
+            E entity = parseLine(line);
+            if (super.save(entity) != null) {
+                System.out.println("Warning: " + path + ", line " + lineNumber
+                        + " ignored: duplicate id " + entity.getId());
             }
-        } catch (IOException e) {
-            throw new RepositoryException("Cannot read file " + fileName, e);
+        } catch (RepositoryException | ValidationException e) {
+            System.out.println("Warning: " + path + ", line " + lineNumber + " ignored: " + e.getMessage());
         }
     }
 
@@ -113,26 +113,25 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
     }
 
     /**
-     * rescrie tot fisierul cu entitatile din memorie; creeaza folderul daca nu exista
+     * rescrie tot fisierul: liniile se obtin printr-un stream peste entitati si se scriu cu Files.write;
+     * creeaza folderul daca nu exista
      *
      * @throws RepositoryException daca fisierul nu poate fi scris
      */
     private void writeToFile() {
-        File file = new File(fileName);
-        File folder = file.getParentFile();
-        if (folder != null && !folder.exists()) {
-            folder.mkdirs();
-        }
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            for (E entity : findAll()) {
-                writer.write(createEntityAsString(entity));
-                writer.newLine();
+        List<String> lines = stream()
+                .map(this::createEntityAsString)
+                .toList();
+        try {
+            Path folder = path.getParent();
+            if (folder != null) {
+                Files.createDirectories(folder);
             }
+            Files.write(path, lines, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RepositoryException("Cannot write file " + fileName, e);
+            throw new RepositoryException("Cannot write file " + path, e);
         }
     }
-
 
     /**
      * salveaza entitatea in memorie si, daca a fost salvata, rescrie fisierul
@@ -146,12 +145,11 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
     @Override
     public E save(E entity) {
         E result = super.save(entity);
-        if(result == null){
+        if (result == null) {
             writeToFile();
         }
         return result;
     }
-
 
     /**
      * sterge entitatea din memorie si, daca a existat, rescrie fisierul
@@ -164,12 +162,11 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
     @Override
     public E delete(ID id) {
         E result = super.delete(id);
-        if(result != null){
+        if (result != null) {
             writeToFile();
         }
         return result;
     }
-
 
     /**
      * actualizeaza entitatea in memorie si, daca a fost actualizata, rescrie fisierul
@@ -183,7 +180,7 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
     @Override
     public E update(E entity) {
         E result = super.update(entity);
-        if(result == null){
+        if (result == null) {
             writeToFile();
         }
         return result;

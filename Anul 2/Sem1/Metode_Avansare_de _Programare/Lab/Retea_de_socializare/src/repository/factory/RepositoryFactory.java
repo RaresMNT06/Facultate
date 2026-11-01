@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Simple Factory pentru repository-uri.
@@ -31,6 +34,9 @@ public class RepositoryFactory {
 
     private final Properties properties;
     private final RepositoryType type;
+
+    private final Map<RepositoryType, Function<Validator<User>, Repository<Long, User>>> userCreators;
+    private final Map<RepositoryType, Function<Validator<Friendship>, Repository<Tuple<Long, Long>, Friendship>>> friendshipCreators;
 
     /**
      * creeaza factory-ul folosind fisierul de configurare implicit
@@ -50,6 +56,17 @@ public class RepositoryFactory {
     public RepositoryFactory(String configFile) {
         this.properties = loadProperties(configFile);
         this.type = readType();
+
+        this.userCreators = Map.of(
+                RepositoryType.MEMORY, InMemoryRepository::new,
+                RepositoryType.FILE, validator -> new UserFileRepository(validator, getRequired("file.users")),
+                RepositoryType.DATABASE, validator -> new UserDbRepository(validator,
+                        getRequired("db.url"), getRequired("db.user"), getRequired("db.password")));
+        this.friendshipCreators = Map.of(
+                RepositoryType.MEMORY, InMemoryRepository::new,
+                RepositoryType.FILE, validator -> new FriendshipFileRepository(validator, getRequired("file.friendships")),
+                RepositoryType.DATABASE, validator -> new FriendshipDbRepository(validator,
+                        getRequired("db.url"), getRequired("db.user"), getRequired("db.password")));
     }
 
 
@@ -65,20 +82,12 @@ public class RepositoryFactory {
      *
      * @param validator - strategia de validare pentru utilizatori
      * @return repository-ul de utilizatori (tipul abstract Repository)
-     * @throws ConfigurationException daca lipseste un parametru necesar tipului ales
+     * @throws ConfigurationException daca tipul nu are creator sau lipseste un parametru necesar
      */
     public Repository<Long, User> createUserRepository(Validator<User> validator) {
-        switch (type) {
-            case MEMORY:
-                return new InMemoryRepository<>(validator);
-            case FILE:
-                return new UserFileRepository(validator, getRequired("file.users"));
-            case DATABASE:
-                return new UserDbRepository(validator,
-                        getRequired("db.url"), getRequired("db.user"), getRequired("db.password"));
-            default:
-                throw new IllegalArgumentException("Unknown repository type: " + type);
-        }
+        return Optional.ofNullable(userCreators.get(type))
+                .orElseThrow(() -> new ConfigurationException("No user repository for type: " + type))
+                .apply(validator);
     }
 
     /**
@@ -86,20 +95,12 @@ public class RepositoryFactory {
      *
      * @param validator - strategia de validare pentru prietenii
      * @return repository-ul de prietenii (tipul abstract Repository)
-     * @throws ConfigurationException daca lipseste un parametru necesar tipului ales
+     * @throws ConfigurationException daca tipul nu are creator sau lipseste un parametru necesar
      */
     public Repository<Tuple<Long, Long>, Friendship> createFriendshipRepository(Validator<Friendship> validator) {
-        switch (type) {
-            case MEMORY:
-                return new InMemoryRepository<>(validator);
-            case FILE:
-                return new FriendshipFileRepository(validator, getRequired("file.friendships"));
-            case DATABASE:
-                return new FriendshipDbRepository(validator,
-                        getRequired("db.url"), getRequired("db.user"), getRequired("db.password"));
-            default:
-                throw new IllegalArgumentException("Unknown repository type: " + type);
-        }
+        return Optional.ofNullable(friendshipCreators.get(type))
+                .orElseThrow(() -> new ConfigurationException("No friendship repository for type: " + type))
+                .apply(validator);
     }
 
     /**
@@ -144,4 +145,5 @@ public class RepositoryFactory {
             throw new ConfigurationException("Unknown repository type: " + value+" (expected MEMORY, FILE or DATABASE)", e);
         }
     }
+
 }
