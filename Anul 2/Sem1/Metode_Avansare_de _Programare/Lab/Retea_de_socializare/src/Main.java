@@ -11,6 +11,8 @@ import service.UserService;
 import ui.ConsoleUI;
 import validators.FriendshipValidator;
 import validators.UserValidator;
+import exceptions.ValidationException;
+import validators.Validator;
 
 /**
  * Punctul de intrare al aplicatiei: creeaza repository-urile prin factory,
@@ -26,8 +28,16 @@ public class Main {
             RepositoryFactory factory = new RepositoryFactory();
             System.out.println("Persistence: " + factory.getType());
 
-            Repository<Long, User> userRepository =
-                    factory.createUserRepository(new UserValidator());
+            int maxNameLength = 20;
+            Validator<User> nameLengthRule = u -> {
+                if (u.getFirstName().length() > maxNameLength || u.getLastName().length() > maxNameLength) {
+                    throw new ValidationException("first name and last name must have at most "
+                            + maxNameLength + " characters");
+                }
+            };
+            Validator<User> userValidator = new UserValidator().andThen(nameLengthRule);
+
+            Repository<Long, User> userRepository = factory.createUserRepository(userValidator);
             Repository<Tuple<Long, Long>, Friendship> friendshipRepository =
                     factory.createFriendshipRepository(new FriendshipValidator());
 
