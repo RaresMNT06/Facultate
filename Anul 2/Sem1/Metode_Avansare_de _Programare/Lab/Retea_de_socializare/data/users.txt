@@ -4,4 +4,3 @@
 4;Maria;Pop;maria@gmail.com;maria2026
 5;Vlad;Ene;vlad@gmail.com;vladparola
 6;Ioana;Moldovan;ioana@gmail.com;ioana2026
-7;Test;User;test@gmail.com;parola123
