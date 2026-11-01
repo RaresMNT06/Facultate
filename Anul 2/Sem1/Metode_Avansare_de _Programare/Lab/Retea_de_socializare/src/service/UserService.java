@@ -3,24 +3,27 @@ package service;
 import exceptions.DuplicateEntityException;
 import exceptions.EntityNotFoundException;
 import model.Friendship;
-import model.User;
+import model.FriendshipCriteria;
 import model.Tuple;
+import model.User;
 import repository.Repository;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Logica aplicatiei pentru utilizatori.
  */
 public class UserService {
+
     private final Repository<Long, User> userRepository;
     private final Repository<Tuple<Long, Long>, Friendship> friendshipRepository;
 
     /**
-     * @param userRepository       repository-ul de utilizatori
-     * @param friendshipRepository repository-ul de prietenii
+     * @param userRepository       - repository-ul de utilizatori
+     * @param friendshipRepository - repository-ul de prietenii
      */
     public UserService(Repository<Long, User> userRepository,
                        Repository<Tuple<Long, Long>, Friendship> friendshipRepository) {
@@ -47,46 +50,64 @@ public class UserService {
         }
         return user;
     }
+
     /**
-     * Sterge un utilizator si toate prieteniile lui.
+     * sterge un utilizator si toate prieteniile lui
      *
-     * @param id id-ul utilizatorului
+     * @param id - id-ul utilizatorului
      * @return utilizatorul sters
      * @throws EntityNotFoundException daca utilizatorul nu exista
      */
-    public User removeUser(Long id){
-        User removed = userRepository.delete(id);
-        if(removed == null){
-            throw new EntityNotFoundException("User with id " + id + " not found");
-        }
+    public User removeUser(Long id) {
+        User removed = Optional.ofNullable(userRepository.delete(id))
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
 
-        List<Tuple<Long,Long>> toDelete = new ArrayList<>();
-        for(Friendship friendship : friendshipRepository.findAll()){
-            if(friendship.getUserId1().equals(id) || friendship.getUserId2().equals(id)){
-                toDelete.add(friendship.getId());
-            }
-        }
-        for(Tuple<Long,Long> friendshipId : toDelete){
-            friendshipRepository.delete(friendshipId);
-        }
+        friendshipRepository.findAll(FriendshipCriteria.involvesUser(id))
+                .stream()
+                .map(Friendship::getId)
+                .forEach(friendshipRepository::delete);
+
         return removed;
     }
 
     /**
-     * @return toti utilizatorii
+     * cauta un utilizator dupa id
+     *
+     * @param id - id-ul utilizatorului
+     * @return Optional cu utilizatorul gasit sau Optional gol daca nu exista
      */
-    public Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+    public Optional<User> findUser(Long id) {
+        return Optional.ofNullable(userRepository.findOne(id));
     }
 
-    private Long generateId(){
-        long maxId = 0;
-        for (User user : userRepository.findAll()){
-            if (user.getId() > maxId){
-                maxId = user.getId();
-            }
-        }
-        return maxId + 1;
+    /**
+     * @return toti utilizatorii, sortati dupa nume, apoi dupa prenume
+     */
+    public List<User> getAllUsers() {
+        return userRepository.stream()
+                .sorted(Comparator.comparing(User::getLastName).thenComparing(User::getFirstName))
+                .toList();
+    }
+
+    /**
+     * cauta utilizatorii care respecta un criteriu
+     *
+     * @param criteria - criteriul de cautare (Predicate), de exemplu din UserCriteria
+     * @return utilizatorii care respecta criteriul, sortati dupa nume, apoi dupa prenume
+     */
+    public List<User> searchUsers(Predicate<User> criteria) {
+        return userRepository.findAll(criteria).stream()
+                .sorted(Comparator.comparing(User::getLastName).thenComparing(User::getFirstName))
+                .toList();
+    }
+
+    /**
+     * @return urmatorul id liber: cel mai mare id existent + 1 (sau 1 daca nu exista utilizatori)
+     */
+    private Long generateId() {
+        return userRepository.stream()
+                .mapToLong(User::getId)
+                .max()
+                .orElse(0) + 1;
     }
 }
-

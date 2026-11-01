@@ -5,12 +5,14 @@ import model.Tuple;
 import model.User;
 import repository.Repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Operatii pe reteaua vazuta ca graf: utilizatorii sunt noduri, prieteniile sunt muchii.
@@ -21,10 +23,9 @@ public class CommunityService {
     private final Repository<Tuple<Long, Long>, Friendship> friendshipRepository;
 
     /**
-     * @param userRepository       repository-ul de utilizatori
-     * @param friendshipRepository repository-ul de prietenii
+     * @param userRepository       - repository-ul de utilizatori
+     * @param friendshipRepository - repository-ul de prietenii
      */
-
     public CommunityService(Repository<Long, User> userRepository,
                             Repository<Tuple<Long, Long>, Friendship> friendshipRepository) {
         this.userRepository = userRepository;
@@ -39,98 +40,108 @@ public class CommunityService {
     }
 
     /**
-     * Comunitatea cea mai sociabila este cea care contine cel mai lung drum.
+     * comunitatea cea mai sociabila este cea care contine cel mai lung drum
      *
-     * @return utilizatorii din comunitatea cea mai sociabila (lista goala daca nu exista utilizatori)
+     * @return utilizatorii din comunitatea cea mai sociabila, sortati dupa nume si prenume
+     * (lista goala daca nu exista utilizatori)
      */
-    public List<User> getMostSociableCommunity(){
+    public List<User> getMostSociableCommunity() {
         Map<Long, List<Long>> graph = buildGraph();
-        List<Long> bestCommunity = new ArrayList<>();
-        int bestLength = -1;
-
-        for (List<Long> community : getCommunities()){
-            int length = longestPathInCommunity(graph, community);
-            if (length > bestLength){
-                bestLength = length;
-                bestCommunity = community;
-            }
-        }
-
-        List<User> users = new ArrayList<>();
-        for (Long id : bestCommunity){
-            users.add(userRepository.findOne(id));
-        }
-        return users;
+        return getCommunities().stream()
+                .max(Comparator.comparingInt((Set<Long> community) -> longestPathInCommunity(graph, community)))
+                .map(community -> community.stream()
+                        .map(userRepository::findOne)
+                        .sorted(Comparator.comparing(User::getLastName).thenComparing(User::getFirstName))
+                        .toList())
+                .orElse(List.of());
     }
 
-    // Pasul 1: lista de adiacenta
-    private Map<Long, List<Long>> buildGraph(){
-        Map<Long, List<Long>> graph = new HashMap<>();
-        for (User user : userRepository.findAll()){
-            graph.put(user.getId(), new ArrayList<>());
-        }
-        for (Friendship friendship : friendshipRepository.findAll()){
-            Long id1 = friendship.getUserId1();
-            Long id2 = friendship.getUserId2();
-            if(graph.containsKey(id1) && graph.containsKey(id2)) {
-                graph.get(id1).add(id2);
-                graph.get(id2).add(id1);
-            }
-        }
-        return graph;
+    /**
+     * construieste lista de adiacenta: fiecare utilizator -> lista vecinilor lui;
+     * prieteniile cu utilizatori inexistenti sunt ignorate
+     *
+     * @return graful retelei
+     */
+    private Map<Long, List<Long>> buildGraph() {
+        Set<Long> userIds = userRepository.stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+
+        Map<Long, List<Long>> neighbours = friendshipRepository.stream()
+                .filter(f -> userIds.contains(f.getUserId1()) && userIds.contains(f.getUserId2()))
+                .flatMap(f -> Stream.of(new Tuple<>(f.getUserId1(), f.getUserId2()),
+                        new Tuple<>(f.getUserId2(), f.getUserId1())))
+                .collect(Collectors.groupingBy(Tuple::getLeft,
+                        Collectors.mapping(Tuple::getRight, Collectors.toList())));
+
+        return userIds.stream()
+                .collect(Collectors.toMap(Function.identity(), id -> neighbours.getOrDefault(id, List.of())));
     }
 
-    // Pasul 2: componentele conexe cu DFS
-    private List<List<Long>> getCommunities(){
+    /**
+     * @return comunitatile (componentele conexe), fiecare ca multime de id-uri
+     */
+    private List<Set<Long>> getCommunities() {
         Map<Long, List<Long>> graph = buildGraph();
+        return graph.keySet().stream()
+                .map(id -> reachableFrom(id, graph))
+                .distinct()
+                .toList();
+    }
+
+    /**
+     * @param start - nodul de pornire
+     * @param graph - graful retelei
+     * @return toate nodurile la care se poate ajunge din start (comunitatea lui)
+     */
+    private Set<Long> reachableFrom(Long start, Map<Long, List<Long>> graph) {
         Set<Long> visited = new HashSet<>();
-        List<List<Long>> communities = new ArrayList<>();
-
-        for (Long node : graph.keySet()){
-            if (!visited.contains(node)){
-                List<Long> community = new ArrayList<>();
-                dfs(node, graph, visited, community);
-                communities.add(community);
-            }
-        }
-        return communities;
+        dfs(start, graph, visited);
+        return visited;
     }
 
-    private void dfs(Long node, Map<Long, List<Long>> graph, Set<Long> visited, List<Long> community){
+    /**
+     * parcurgere in adancime; vecinii nevizitati sunt procesati cu stream-uri
+     *
+     * @param node    - nodul curent
+     * @param graph   - graful retelei
+     * @param visited - nodurile vizitate pana acum
+     */
+    private void dfs(Long node, Map<Long, List<Long>> graph, Set<Long> visited) {
         visited.add(node);
-        community.add(node);
-        for (Long neighbor : graph.get(node)){
-            if (!visited.contains(neighbor)){
-                dfs(neighbor, graph, visited, community);
-            }
-        }
+        graph.get(node).stream()
+                .filter(neighbour -> !visited.contains(neighbour))
+                .forEach(neighbour -> dfs(neighbour, graph, visited));
     }
 
-    // Pasul 3: cel mai lung drum dintr-o comunitate
-    private int longestPathInCommunity(Map<Long, List<Long>> graph, List<Long> community){
-        int best = 0;
-        for (Long start: community){
-            int length = longestPathFrom(start, graph, new HashSet<>());
-            if (length > best){
-                best = length;
-            }
-        }
-        return best;
+    /**
+     * @param graph     - graful retelei
+     * @param community - nodurile comunitatii
+     * @return lungimea celui mai lung drum simplu din comunitate
+     */
+    private int longestPathInCommunity(Map<Long, List<Long>> graph, Set<Long> community) {
+        return community.stream()
+                .mapToInt(start -> longestPathFrom(start, graph, new HashSet<>()))
+                .max()
+                .orElse(0);
     }
 
-    private int longestPathFrom(Long node, Map<Long, List<Long>> graph, Set<Long> visited){
+    /**
+     * backtracking: cel mai lung drum simplu care porneste din node
+     *
+     * @param node    - nodul curent
+     * @param graph   - graful retelei
+     * @param visited - nodurile de pe drumul curent
+     * @return lungimea celui mai lung drum care porneste din node
+     */
+    private int longestPathFrom(Long node, Map<Long, List<Long>> graph, Set<Long> visited) {
         visited.add(node);
-        int best = 0;
-        for (Long neighbor : graph.get(node)){
-            if (!visited.contains(neighbor)){
-                int length =  1 + longestPathFrom(neighbor, graph, visited);
-                if (length > best){
-                    best = length;
-                }
-            }
-        }
+        int best = graph.get(node).stream()
+                .filter(neighbour -> !visited.contains(neighbour))
+                .mapToInt(neighbour -> 1 + longestPathFrom(neighbour, graph, visited))
+                .max()
+                .orElse(0);
         visited.remove(node);
         return best;
     }
-
 }

@@ -3,16 +3,16 @@ package service;
 import exceptions.DuplicateEntityException;
 import exceptions.EntityNotFoundException;
 import model.Friendship;
-import model.User;
+import model.FriendshipCriteria;
 import model.Tuple;
+import model.User;
 import repository.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Logica aplicatiei pentru prietenii.
@@ -23,8 +23,8 @@ public class FriendshipService {
     private final Repository<Tuple<Long, Long>, Friendship> friendshipRepository;
 
     /**
-     * @param userRepository       repository-ul de utilizatori
-     * @param friendshipRepository repository-ul de prietenii
+     * @param userRepository       - repository-ul de utilizatori
+     * @param friendshipRepository - repository-ul de prietenii
      */
     public FriendshipService(Repository<Long, User> userRepository,
                              Repository<Tuple<Long, Long>, Friendship> friendshipRepository) {
@@ -60,45 +60,42 @@ public class FriendshipService {
      */
     public void removeFriendship(Long userId1, Long userId2) {
         Tuple<Long, Long> id = new Tuple<>(Math.min(userId1, userId2), Math.max(userId1, userId2));
-        if (friendshipRepository.delete(id) == null) {
-            throw new EntityNotFoundException("Friendship " + userId1 + " and " + userId2 + " not found");
-        }
+        Optional.ofNullable(friendshipRepository.delete(id))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Friendship " + userId1 + " and " + userId2 + " not found"));
     }
+
     /**
      * @param userId - id-ul utilizatorului
-     * @return lista prietenilor utilizatorului (prieteniile cu utilizatori inexistenti sunt ignorate)
+     * @return prietenii utilizatorului, sortati dupa nume si prenume
+     * (prieteniile cu utilizatori inexistenti sunt ignorate)
      * @throws EntityNotFoundException daca utilizatorul nu exista
      */
     public List<User> getFriends(Long userId) {
         checkUserExist(userId);
-        List<User> friends = new ArrayList<>();
-        for (Friendship friendship : friendshipRepository.findAll()) {
-            Long friendId = null;
-            if (friendship.getUserId1().equals(userId)) {
-                friendId = friendship.getUserId2();
-            } else if (friendship.getUserId2().equals(userId)) {
-                friendId = friendship.getUserId1();
-            }
-            if (friendId != null) {
-                User friend = userRepository.findOne(friendId);
-                if (friend != null) {
-                    friends.add(friend);
-                }
-            }
-        }
-        return friends;
+        return friendshipRepository.findAll(FriendshipCriteria.involvesUser(userId)).stream()
+                .map(f -> f.getUserId1().equals(userId) ? f.getUserId2() : f.getUserId1())
+                .map(friendId -> Optional.ofNullable(userRepository.findOne(friendId)))
+                .flatMap(Optional::stream)
+                .sorted(Comparator.comparing(User::getLastName).thenComparing(User::getFirstName))
+                .toList();
     }
 
     /**
-     * @return toate prieteniile
+     * @return toate prieteniile, sortate dupa data la care au fost create
      */
-    public Iterable<Friendship> getFriendships(){
-        return friendshipRepository.findAll();
+    public List<Friendship> getFriendships() {
+        return friendshipRepository.stream()
+                .sorted(Comparator.comparing(Friendship::getFriendsFrom))
+                .toList();
     }
 
-    private void checkUserExist(Long userId){
-        if (userRepository.findOne(userId) == null) {
-            throw new EntityNotFoundException("User with id "+ userId +" not found");
-        }
+    /**
+     * @param userId - id-ul utilizatorului verificat
+     * @throws EntityNotFoundException daca utilizatorul nu exista
+     */
+    private void checkUserExist(Long userId) {
+        Optional.ofNullable(userRepository.findOne(userId))
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
     }
 }
