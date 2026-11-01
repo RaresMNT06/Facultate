@@ -2,6 +2,10 @@ package repository;
 
 import exceptions.ValidationException;
 import model.Entity;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Interfata pentru operatiile CRUD ale unui repository
@@ -55,4 +59,30 @@ public interface Repository<ID, E extends Entity<ID>> {
      * @throws IllegalArgumentException daca entitatea este null
      */
     E update(E entity);
+
+    /**
+     * transforma toate entitatile din repository intr-un stream
+     * (metoda ajutatoare, scrisa o singura data, folosita de service-uri)
+     *
+     * @return un stream secvential cu toate entitatile
+     */
+    default Stream<E> stream() {
+        return StreamSupport.stream(findAll().spliterator(), false);
+    }
+
+    /**
+     * cauta entitatile care respecta un criteriu
+     *
+     * @param filter - criteriul de cautare (Predicate); nu poate fi null
+     * @return lista entitatilor pentru care filter.test(entitate) este true
+     * @throws IllegalArgumentException daca filter este null
+     */
+    default List<E> findAll(Predicate<E> filter) {
+        if (filter == null) {
+            throw new IllegalArgumentException("filter must not be null");
+        }
+        return stream()
+                .filter(filter)
+                .toList();
+    }
 }

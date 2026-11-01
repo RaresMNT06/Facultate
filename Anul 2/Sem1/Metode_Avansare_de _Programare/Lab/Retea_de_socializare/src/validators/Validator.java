@@ -34,7 +34,4 @@ public interface Validator<T> {
             other.validate(entity);
         };
     }
-
-
-
 }
