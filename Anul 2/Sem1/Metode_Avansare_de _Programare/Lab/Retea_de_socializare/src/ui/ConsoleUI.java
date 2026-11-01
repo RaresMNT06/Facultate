@@ -4,7 +4,6 @@ import exceptions.DuplicateEntityException;
 import exceptions.EntityNotFoundException;
 import exceptions.RepositoryException;
 import exceptions.ValidationException;
-import model.Friendship;
 import model.User;
 import service.CommunityService;
 import service.FriendshipService;
@@ -12,6 +11,8 @@ import service.UserService;
 
 import java.util.List;
 import java.util.Scanner;
+import model.UserCriteria;
+import java.util.function.Predicate;
 
 /**
  * Interfata cu utilizatorul in consola.
@@ -56,6 +57,7 @@ public class ConsoleUI {
                     case "7": showFriends(); break;
                     case "8": showCommunityCount(); break;
                     case "9": showMostSociableCommunity(); break;
+                    case "10": searchUsers(); break;
                     case "0":
                         System.out.println("Bye!");
                         return;
@@ -86,8 +88,23 @@ public class ConsoleUI {
         System.out.println("7. Show friends of a user");
         System.out.println("8. Number of communities");
         System.out.println("9. Most sociable community");
+        System.out.println("10. Search users");
         System.out.println("0. Exit");
         System.out.print("Option: ");
+    }
+
+    /**
+     * afiseaza elementele unei liste, cate unul pe linie, sau un mesaj daca lista e goala
+     *
+     * @param items        - elementele de afisat
+     * @param emptyMessage - mesajul afisat cand lista e goala
+     */
+    private void printAll(List<?> items, String emptyMessage) {
+        if (items.isEmpty()) {
+            System.out.println(emptyMessage);
+        } else {
+            items.forEach(System.out::println);
+        }
     }
 
     private void addUser() {
@@ -126,26 +143,16 @@ public class ConsoleUI {
 
 
     private void showUsers() {
-        for (User user : userService.getAllUsers()) {
-            System.out.println(user);
-        }
+        printAll(userService.getAllUsers(), "No users.");
     }
 
     private void showFriendships() {
-        for (Friendship friendship : friendshipService.getFriendships()) {
-            System.out.println(friendship);
-        }
+        printAll(friendshipService.getFriendships(), "No friendships.");
     }
 
     private void showFriends() {
         Long id = readId("User id: ");
-        List<User> friends = friendshipService.getFriends(id);
-        if (friends.isEmpty()) {
-            System.out.println("This user has no friends.");
-        }
-        for (User friend : friends) {
-            System.out.println(friend);
-        }
+        printAll(friendshipService.getFriends(id), "This user has no friends.");
     }
 
     private void showCommunityCount() {
@@ -153,15 +160,41 @@ public class ConsoleUI {
     }
 
     private void showMostSociableCommunity() {
-        List<User> community = communityService.getMostSociableCommunity();
         System.out.println("Most sociable community:");
-        for (User user : community) {
-            System.out.println(user);
-        }
+        printAll(communityService.getMostSociableCommunity(), "No users.");
     }
 
     private Long readId(String message) {
         System.out.print(message);
         return Long.parseLong(scanner.nextLine().trim());
+    }
+
+
+    /**
+     * cauta utilizatori dupa criterii combinate (UserCriteria + and / Predicate.not);
+     * un criteriu lasat gol nu se aplica
+     */
+    private void searchUsers() {
+        System.out.print("Last name (Enter = any): ");
+        String lastName = scanner.nextLine().trim();
+        System.out.print("First name starts with (Enter = any): ");
+        String prefix = scanner.nextLine().trim();
+        System.out.print("Email: 1 = only Gmail, 2 = without Gmail, Enter = any: ");
+        String gmail = scanner.nextLine().trim();
+
+        Predicate<User> criteria = u -> true;
+        if (!lastName.isEmpty()) {
+            criteria = criteria.and(UserCriteria.hasLastName(lastName));
+        }
+        if (!prefix.isEmpty()) {
+            criteria = criteria.and(UserCriteria.firstNameStartsWith(prefix));
+        }
+        switch (gmail) {
+            case "1": criteria = criteria.and(UserCriteria::hasGmail); break;
+            case "2": criteria = criteria.and(Predicate.not(UserCriteria::hasGmail)); break;
+            default: break;
+        }
+
+        printAll(userService.searchUsers(criteria), "No users found.");
     }
 }
