@@ -17,21 +17,21 @@ GO
 
 -- =================== 1. TIPUL UNEI COLOANE ===================
 
-CREATE PROCEDURE ModificaTipColoana
+ALTER PROCEDURE ModificaTipColoana
 AS
 BEGIN
-	ALTER TABLE Circuite
-	ALTER COLUMN oras VARCHAR(100);
-	PRINT 'Coloana oras din Circuite are acum tipul VARCHAR(100)';
+    ALTER TABLE Echipe
+    ALTER COLUMN an_infiintare VARCHAR(10);
+    PRINT 'Coloana an_infiintare din Echipe are acum tipul VARCHAR(10)';
 END;
 GO
 
-CREATE PROCEDURE RevinoTipColoana
+ALTER PROCEDURE RevinoTipColoana
 AS
 BEGIN
-	ALTER TABLE Circuite
-	ALTER COLUMN oras VARCHAR(50);
-	PRINT 'Coloana oras din Circuite a revenit la tipul VARCHAR(50)';
+    ALTER TABLE Echipe
+    ALTER COLUMN an_infiintare INT;
+    PRINT 'Coloana an_infiintare din Echipe a revenit la tipul INT';
 END;
 GO
 
@@ -200,3 +200,8 @@ EXEC SchimbaVersiune 0;
 SELECT * FROM VersiuneBD;
 
 SELECT * FROM ProceduriVersiune
+
+
+SELECT min(puncte) FROM Rezultate
+GROUP BY pozitie
+

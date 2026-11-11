@@ -34,6 +34,7 @@ inloc([H|T],E,L1,[H|R]) :-
 % ?- inloc([], 1, [10,11], X).              X = []
 % ?- adaugaLista([1,2], [3,4], X).          X = [1,2,3,4]
 
+%------------------------------------------------------------
 % Punctul b
 % inlocPrim(L: lista, L1: lista, R: lista)
 % L - sublista
@@ -50,10 +51,11 @@ inlocPrim([H|T],L1,R):-
 % R - rezultatul
 % model de flux (i, i, o), (i, i, i)
 prelucrare([],_,[]).
-prelucrare([H|T],L1,[H1|R]):-
+prelucrare([H|T],L1,R):-
     is_list(H),
     inlocPrim(H,L1,H1),
-    prelucrare(T,L1,R).
+    prelucrare(T,L1,R1),
+    adaugaLista(H1,R1,R).
 prelucrare([H|T],L1,[H|R]):-
     number(H),
     prelucrare(T,L1,R).

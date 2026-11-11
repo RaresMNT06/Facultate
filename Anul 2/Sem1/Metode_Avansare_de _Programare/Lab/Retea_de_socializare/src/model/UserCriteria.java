@@ -45,4 +45,4 @@ public final class UserCriteria {
     public static boolean hasGmail(User u) {
         return u.getEmail().endsWith("@gmail.com");
     }
-}
+} 
