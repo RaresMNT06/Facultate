@@ -4,13 +4,12 @@ import exceptions.ValidationException;
 import model.User;
 
 /**
- * Validator pentru utilizatori.
- * Un utilizator este valid daca:
- * - id-ul, daca exista, este pozitiv (un utilizator nou nu are inca id: il da stocarea)
- * - prenumele si numele sunt nevide si incep cu litera mare
- * - email-ul are forma nume@domeniu.extensie
- * - parola are cel putin 6 caractere
- * Regula "fara ';'" tine de formatul fisierului, deci se verifica in UserFileRepository.
+ * Validator for users. A user is valid if:
+ * - the id, if present, is positive (a new user has no id yet: the storage generates it)
+ * - the first and last name are not blank and start with an uppercase letter
+ * - the email has the form name@domain.extension
+ * - the password has at least 6 characters
+ * The rule "no ';'" belongs to the file format, so it is checked in UserFileRepository.
  */
 public class UserValidator implements Validator<User> {
 

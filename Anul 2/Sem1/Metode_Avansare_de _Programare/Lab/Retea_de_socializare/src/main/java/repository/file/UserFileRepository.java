@@ -19,10 +19,10 @@ public class UserFileRepository extends AbstractFileRepository<Long, User> {
     }
 
     /**
-     * verifica regula formatului de fisier: niciun camp nu poate contine ';' (separatorul)
+     * checks the rule of the file format: no field may contain ';' (the separator)
      *
-     * @param user - utilizatorul de verificat
-     * @throws ValidationException daca un camp contine ';'
+     * @param user - the user to check
+     * @throws ValidationException if a field contains ';'
      */
     private void checkNoSeparator(User user) {
         if (user != null && String.join("", user.getFirstName(), user.getLastName(),
@@ -42,9 +42,8 @@ public class UserFileRepository extends AbstractFileRepository<Long, User> {
         checkNoSeparator(user);
         return super.update(user);
     }
-
     /**
-     * @return urmatorul id liber: cel mai mare id existent + 1 (sau 1 daca nu exista utilizatori)
+     * @return the next free id: the largest existing id + 1 (or 1 if there are no users)
      */
     @Override
     protected Long generateId() {

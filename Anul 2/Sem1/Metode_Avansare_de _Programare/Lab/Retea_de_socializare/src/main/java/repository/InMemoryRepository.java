@@ -40,14 +40,23 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
     }
 
     /**
-     * genereaza id-ul pentru o entitate noua, care nu are inca id
-     * (Template Method: implicit nu genereaza nimic; subclasele care stiu sa genereze il suprascriu)
+     * generates the id of a new entity, which has no id yet
+     * (Template Method: by default nothing is generated; subclasses that can generate ids override it)
      *
-     * @return id-ul generat sau null daca repository-ul nu genereaza id-uri
+     * @return the generated id or null if this repository does not generate ids
      */
     protected ID generateId() {
         return null;
     }
+
+    /**
+     * saves a new entity; if it has no id, the id is generated with generateId()
+     *
+     * @param entity - the entity to save; must not be null
+     * @return null - if the entity was saved, otherwise the entity (its id already exists)
+     * @throws IllegalArgumentException          if entity is null or no id can be obtained
+     * @throws exceptions.ValidationException    if the entity is not valid
+     */
 
     @Override
     public E save(E entity) {
