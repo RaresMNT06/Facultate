@@ -39,3 +39,6 @@ docs/
 .gradle/
 build/
 *.iml
+
+### Configurare locala (parola reala) ###
+src/main/resources/config.properties
