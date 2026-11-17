@@ -32,19 +32,19 @@ public class UserService {
     }
 
     /**
-     * adauga un utilizator nou, cu id generat automat
+     * adauga un utilizator nou; id-ul il genereaza stocarea (baza de date sau repository-ul)
      *
      * @param firstName - prenumele utilizatorului
      * @param lastName  - numele utilizatorului
      * @param email     - adresa de email a utilizatorului
      * @param password  - parola utilizatorului
-     * @return utilizatorul adaugat
+     * @return utilizatorul adaugat, cu id-ul primit de la stocare
      * @throws exceptions.ValidationException daca datele nu sunt valide
      * @throws DuplicateEntityException       daca id-ul exista deja
+     * @throws exceptions.RepositoryException daca stocarea nu poate salva (ex. email duplicat in baza de date)
      */
     public User addUser(String firstName, String lastName, String email, String password) {
-        User user = new User(firstName, lastName, email, password);
-        user.setId(generateId());
+        User user = new User(firstName, lastName, email, password);   // fara id
         if (userRepository.save(user) != null) {
             throw new DuplicateEntityException("User with id " + user.getId() + " already exists");
         }
@@ -59,15 +59,17 @@ public class UserService {
      * @throws EntityNotFoundException daca utilizatorul nu exista
      */
     public User removeUser(Long id) {
-        User removed = Optional.ofNullable(userRepository.delete(id))
+        Optional.ofNullable(userRepository.findOne(id))
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
 
+        // intai prieteniile, apoi utilizatorul: merge si fara ON DELETE CASCADE (cheia straina)
+        // si pentru FILE / MEMORY, unde nu exista CASCADE
         friendshipRepository.findAll(FriendshipCriteria.involvesUser(id))
                 .stream()
                 .map(Friendship::getId)
                 .forEach(friendshipRepository::delete);
 
-        return removed;
+        return userRepository.delete(id);
     }
 
     /**

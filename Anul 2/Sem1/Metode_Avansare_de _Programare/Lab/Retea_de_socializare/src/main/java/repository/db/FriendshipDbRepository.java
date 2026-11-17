@@ -84,7 +84,7 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
                 return resultSet.next() ? extractFriendship(resultSet) : null;
             }
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while searching friendship " + id + ": " + e.getMessage(), e);
+            throw DbErrors.wrap("searching friendship " + id, e);
         }
     }
 
@@ -104,7 +104,7 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
                 friendships.add(extractFriendship(resultSet));
             }
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while reading friendships: " + e.getMessage(), e);
+            throw DbErrors.wrap("reading friendships", e);
         }
         return friendships;
     }
@@ -138,7 +138,7 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
             statement.setTimestamp(3, Timestamp.valueOf(entity.getFriendsFrom()));   // LocalDateTime -> TIMESTAMP
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while saving friendship: " + e.getMessage(), e);
+            throw DbErrors.wrap("saving friendship", e);
         }
         return null;
     }
@@ -165,7 +165,7 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
             statement.setLong(2, id.getRight());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while deleting friendship " + id + ": " + e.getMessage(), e);
+            throw DbErrors.wrap("deleting friendship " + id, e);
         }
         return found;
     }
@@ -196,7 +196,7 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Fri
             int rows = statement.executeUpdate();
             return rows == 0 ? entity : null;                // 0 randuri = prietenia nu exista
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while updating friendship " + entity.getId() + ": " + e.getMessage(), e);
+            throw DbErrors.wrap("updating friendship " + entity.getId(), e);
         }
     }
 }

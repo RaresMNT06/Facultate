@@ -28,7 +28,7 @@ public class Main {
             RepositoryFactory factory = new RepositoryFactory();
             System.out.println("Persistence: " + factory.getType());
 
-            int maxNameLength = 20;
+            int maxNameLength = 50;
             Validator<User> nameLengthRule = u -> {
                 if (u.getFirstName().length() > maxNameLength || u.getLastName().length() > maxNameLength) {
                     throw new ValidationException("first name and last name must have at most "

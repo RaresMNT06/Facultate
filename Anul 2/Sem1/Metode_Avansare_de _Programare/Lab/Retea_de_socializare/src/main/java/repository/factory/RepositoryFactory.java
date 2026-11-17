@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import repository.UserInMemoryRepository;
 
 /**
  * Simple Factory pentru repository-uri.
@@ -58,7 +59,7 @@ public class RepositoryFactory {
         this.type = readType();
 
         this.userCreators = Map.of(
-                RepositoryType.MEMORY, InMemoryRepository::new,
+                RepositoryType.MEMORY, UserInMemoryRepository::new,
                 RepositoryType.FILE, validator -> new UserFileRepository(validator, getRequired("file.users")),
                 RepositoryType.DATABASE, validator -> new UserDbRepository(validator,
                         getRequired("db.url"), getRequired("db.user"), getRequired("db.password")));

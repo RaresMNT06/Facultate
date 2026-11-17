@@ -39,10 +39,26 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
         return entities.values();
     }
 
+    /**
+     * genereaza id-ul pentru o entitate noua, care nu are inca id
+     * (Template Method: implicit nu genereaza nimic; subclasele care stiu sa genereze il suprascriu)
+     *
+     * @return id-ul generat sau null daca repository-ul nu genereaza id-uri
+     */
+    protected ID generateId() {
+        return null;
+    }
+
     @Override
     public E save(E entity) {
-        if (entity == null || entity.getId() == null){
-            throw new IllegalArgumentException("Entity and its id must not be null");
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity must not be null");
+        }
+        if (entity.getId() == null) {               // entitate noua: id-ul il da stocarea
+            entity.setId(generateId());
+        }
+        if (entity.getId() == null) {
+            throw new IllegalArgumentException("Entity id must not be null");
         }
         validator.validate(entity);
         if (entities.containsKey(entity.getId())) {

@@ -75,7 +75,7 @@ public class UserDbRepository implements Repository<Long, User> {
                 return resultSet.next() ? extractUser(resultSet) : null;
             }
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while searching user " + id + ": " + e.getMessage(), e);
+            throw DbErrors.wrap("searching user " + id, e);
         }
     }
 
@@ -95,7 +95,7 @@ public class UserDbRepository implements Repository<Long, User> {
                 users.add(extractUser(resultSet));
             }
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while reading users: " + e.getMessage(), e);
+            throw DbErrors.wrap("reading users", e);
         }
         return users;
     }
@@ -134,7 +134,7 @@ public class UserDbRepository implements Repository<Long, User> {
                 }
             }
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while saving user: " + e.getMessage(), e);
+            throw DbErrors.wrap("saving user", e);
         }
         return null;
     }
@@ -160,7 +160,7 @@ public class UserDbRepository implements Repository<Long, User> {
             statement.setLong(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while deleting user " + id + ": " + e.getMessage(), e);
+            throw DbErrors.wrap("deleting user " + id, e);
         }
         return found;
     }
@@ -194,7 +194,7 @@ public class UserDbRepository implements Repository<Long, User> {
             int rows = statement.executeUpdate();            // cate randuri s-au modificat
             return rows == 0 ? entity : null;                // 0 randuri = id-ul nu exista
         } catch (SQLException e) {
-            throw new RepositoryException("Database error while updating user " + entity.getId() + ": " + e.getMessage(), e);
+            throw DbErrors.wrap("updating user " + entity.getId(), e);
         }
     }
 }

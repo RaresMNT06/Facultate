@@ -5,19 +5,18 @@ import exceptions.EntityNotFoundException;
 import exceptions.RepositoryException;
 import exceptions.ValidationException;
 import model.User;
+import model.UserCriteria;
 import service.CommunityService;
 import service.FriendshipService;
 import service.UserService;
 
 import java.util.List;
 import java.util.Scanner;
-import model.UserCriteria;
 import java.util.function.Predicate;
 
 /**
  * Interfata cu utilizatorul in consola.
  */
-
 public class ConsoleUI {
 
     private final UserService userService;
@@ -30,7 +29,6 @@ public class ConsoleUI {
      * @param friendshipService service-ul de prietenii
      * @param communityService  service-ul de comunitati
      */
-
     public ConsoleUI(UserService userService, FriendshipService friendshipService,
                      CommunityService communityService) {
         this.userService = userService;
@@ -69,9 +67,7 @@ public class ConsoleUI {
             } catch (NumberFormatException e) {
                 System.out.println("Error: id must be a number.");
             } catch (RepositoryException e) {
-                System.out.println("File error: " + e.getMessage());
-            } catch (UnsupportedOperationException e) {
-                System.out.println("Not available: " + e.getMessage());
+                System.out.println("Storage error: " + e.getMessage());
             }
         }
     }
@@ -117,7 +113,7 @@ public class ConsoleUI {
         System.out.print("Password: ");
         String password = scanner.nextLine();
         User user = userService.addUser(firstName, lastName, email, password);
-        System.out.println("Added: " + user);
+        System.out.println("Added user with id " + user.getId() + ": " + user);
     }
 
     private void removeUser() {
@@ -125,7 +121,6 @@ public class ConsoleUI {
         User user = userService.removeUser(id);
         System.out.println("Removed: " + user);
     }
-
 
     private void addFriendship() {
         Long id1 = readId("First user id: ");
@@ -140,7 +135,6 @@ public class ConsoleUI {
         friendshipService.removeFriendship(id1, id2);
         System.out.println("Friendship removed.");
     }
-
 
     private void showUsers() {
         printAll(userService.getAllUsers(), "No users.");
@@ -168,7 +162,6 @@ public class ConsoleUI {
         System.out.print(message);
         return Long.parseLong(scanner.nextLine().trim());
     }
-
 
     /**
      * cauta utilizatori dupa criterii combinate (UserCriteria + and / Predicate.not);
