@@ -34,3 +34,8 @@ docs/
 
 ### Arhive ###
 *.zip
+
+### Gradle ###
+.gradle/
+build/
+*.iml
